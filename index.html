@@ -1,12 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hungarian card game</title>
-    <link rel="stylesheet" href="./style/style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="./style/style.css" />
+  </head>
+  <body>
+    <header>
+        <ul class="datas js-datas">
+            <li>Player pontszerző lapok száma: 0</li>
+       <li>Computer pontszerző lapok száma: 0</li>
+       <li>Pakliban lévő lapok száma: 32</li>
+        </ul>
+    </header>
+    <section class="game-table js-game-table">
+      <div>
+        <h2>Játékos lapjai</h2>
+        <section class="inside-table js-player-table"></section>
+      </div>
+      <section class="gamefield js-gamefield"></section>
+      <div>
+        <h2>Computer lapjai</h2>
+        <section class="inside-table js-computer-table"></section>
+      </div>
+    </section>
     <script src="./index.js"></script>
-</body>
+    <!--TODO:
+    1. Számlálók inicializálása (Pontszerző lapok száma(player-computer), pakliban maradt lapok száma, fordulók száma? (talán)) KÉSZ
+    2. Játékasztal létrehozása. KÉSZ
+    3. Pakli inicializálása objektumba {érték: img}. KÉSZ
+    4. Pakli keverése. KÉSZ
+    5. játékos lapjai objektum létrehozása. KÉSZ
+    6. Computer lapjai objektum létrehozása. KÉSZ
+    7. Játékosok lapjainak rendelelése. KÉSZ
+    8. Start game function =>  4-4 lap kiosztása, -8 lap a pakliból.
+    9. 
+        1. lépés:
+        Játékos kezd:
+            Kiválaszott lap lerakása (középre), ott megjelenik az adott lap, a játékos elől pedig eltűnik.
+        2. lépés:
+        Computer döntése:
+            Azonos lap esetén üti, kivéve ha pontszerző lap, ez esetben csak akkor, ha minimum 2 pontszerző lap van nála, vagy
+            rendelkezik ütőkártyával (7-es). 
+            Ha nincs azonos lapja, akkor a legalacsonyabb értékű lapot dobja, ha nincs ilyen akkor értékes lapot.
+        3. lépés:
+        Kör végre:
+            - Nem azonos lap esetén:
+                - A hívó fél szerzi meg a lapokat.
+                - Kivétel, ha a másik játékos 7-est dobott, mert akkor ő szerzi meg a lapokat.
+            - Azonos lapok esetén: 
+                - Ha a hívó fél nem tudja folytatni a kört, a másik játékos szerzi meg a lapokat.
+            Kiértékelés !
+        Következő kör:
+            Minden játékos annyi lapot kap a pakliból, hogy kiegészüljön a ,,kezükben" tartott lapok száma 4 re.
+                Ha nincs elég lap, akkor egyenlő mennyiségű lapot kapnak.
+            Az a játékos nyitja a következő kört, Aki az előző körben megszerezte a középen lévő lapokat.
+            Ezt követően a folyamat megegyezik az előzővel.
+                
+
+    -->
+  </body>
 </html>
