@@ -2,6 +2,11 @@
     box-sizing: border-box;
 }
 
+/*Ez később átírásra kerül*/
+img {
+    margin: .3rem;
+}
+
 .datas {
     list-style-type: none;
     display: flex;
@@ -15,6 +20,23 @@
     justify-content: space-around;
 }
 
+.gamefield {
+    margin: 0 auto;
+    width: 75%;
+    height: 350px;
+    border: 1px solid black;
+}
+
+.players-area {
+    display: flex;
+    justify-content: space-around;
+    border: 1px solid black;
+}
+
 .inside-table {
     margin: 1rem;
+    padding: 1rem;
+    border: 2px solid black;
+    border-radius: .5rem;
+    background-color: black;
 }

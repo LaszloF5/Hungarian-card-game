@@ -1,10 +1,15 @@
 let playerGameTable = document.querySelector(".js-player-table");
 let computerGameTable = document.querySelector(".js-computer-table");
 let dataField = document.querySelector(".js-datas");
+let gameField = document.querySelector(".js-gamefield");
+
 let playerCards = [];
 let playerKeys = [];
 let computerCards = [];
 let computerKeys = [];
+
+// Buttons
+let startButton = document.querySelector(".js-start-button");
 
 const deck = [
   [{ L2: '<img src=".//card-images//cards-medium//leaf-unter.png" alt="L2">' }],
@@ -90,13 +95,24 @@ let gameTable = document.querySelector(".js-game-table");
 function renderDatas() {
   dataField.innerHTML = `
        <li>Player pontszerző lapok száma: </li>
+       <li>Player lapjainak az értéke: ${playerKeys} </li>
        <li>Computer pontszerző lapok száma: </li>
+       <li>Computer lapjainak az értéke: ${computerKeys} </li>
        <li>Pakliban lévő lapok száma: ${deck.length}</li>
        `;
 }
 
+// Start button kezelése (disabled)
+function isDisabled() {
+  if (deck.length === 32) {
+    startButton.disabled = false;
+  } else {
+    startButton.disabled = true;
+  }
+}
+
 // Pakli keverő függvény
-function shuffledDeck(deck) {
+function shuffleDeck(deck) {
   for (let i = deck.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
     [deck[i], deck[j]] = [deck[j], deck[i]];
@@ -114,7 +130,7 @@ function dealCard(deck) {
 function updateGameTable(cards, gameTable) {
   gameTable.innerHTML = "";
   cards.forEach((card) => {
-    const cardHtml = Object.values(card)[0];
+    const cardHtml = Object.values(card)[0]; //imgs
     gameTable.innerHTML += cardHtml;
   });
 }
@@ -139,16 +155,45 @@ function getCardKeys(cards) {
 }
 
 function startGame() {
-  shuffledDeck(deck);
-  dealCardsForPlayerAndComputer();
-  playerKeys = getCardKeys(playerCards);
-  computerKeys = getCardKeys(computerCards);
+  shuffleDeck(deck); // Pakli keverése
+  dealCardsForPlayerAndComputer(); // Lapok kiosztása
+  playerKeys = getCardKeys(playerCards); // Játékos lapjainak az értékének visszaadása
+  computerKeys = getCardKeys(computerCards); // Computer lapjainak az értékének visszaadása
   renderDatas();
+  isDisabled();
+  console.log("playerCards", playerCards);
+  console.log(computerCards);
+  console.log(playerKeys);
+  console.log(computerKeys);
 }
 
-startGame();
+/* 
+    TODO: Egy függvény, ami folyamatosan frissíti a lapokat, és a hozzájuk tartozó értékeket!
+    Klikkesemény létrehozása, melynek hatására az adott kártyalap elmozdul, az érték pedig a ...Keys tömbből eltávolodik.(renderelni kell a Cards tömb alapján) Az eseményfigyelőt a konténerre kell tenni, és this-el kell elérni a kártyalapokat.
+    Ezt követően kiértékelés következik kulcs alapján. Lerakott lap kulcsa megtalálható-e az computerKeys tömbben. 
+*/
 
-console.log(playerCards);
-console.log(computerCards);
-console.log(playerKeys);
-console.log(computerKeys);
+/*
+playerCards;
+playerKeys;
+computerCards;
+computerKeys
+ */
+
+// Button events
+
+startButton.addEventListener("click", startGame);
+
+playerGameTable.addEventListener('click', (event) => {
+  debugger;
+  if (event.target.tagName === 'IMG') { //A tagName egy adott DOM elem HTML tagjának nevét adja vissza. Jelen esetben a playerGameTable-ben szereplőkét.
+    gameField.appendChild(event.target)
+    let imgSrc = event.target.src; // A target src attribútumát nyerjük ki
+    let index = playerCards.indexOf(imgSrc); // Az indexOf megkeresi az adott elem első előfordulási indexét a tömbben. 0 vagy nagyobb az index, akkor tartalmazza, ha -1 akkor nem
+    if (index > -1) {
+      playerCards.splice(index, 1) // index = A pozíció ahonnan az elemet el akarjuk távolítani, 1 = Az eltávolítani kívánt elemek száma.
+    }
+  }
+})
+
+// https://sentry.io/answers/remove-specific-item-from-array/
