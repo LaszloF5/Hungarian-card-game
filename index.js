@@ -119,8 +119,6 @@ function shuffleDeck(deck) {
   }
 }
 
-//Pakli keverése
-
 //Pakliból kártyalapok kivétele
 function dealCard(deck) {
   return deck.shift()[0];
@@ -130,7 +128,8 @@ function dealCard(deck) {
 function updateGameTable(cards, gameTable) {
   gameTable.innerHTML = "";
   cards.forEach((card) => {
-    const cardHtml = Object.values(card)[0]; //imgs
+    //TODO: Átírni for ciklussá.
+    const cardHtml = Object.values(card); //imgs // A playerCards egy szájbak*rt tömb!
     gameTable.innerHTML += cardHtml;
   });
 }
@@ -151,12 +150,12 @@ function dealCardsForPlayerAndComputer() {
 
 // A kártyák kulcsainak kinyerése
 function getCardKeys(cards) {
-  return cards.map((card) => Object.keys(card)[0]); //Object.keys -> Visszaadja minden objektum kulcsát [0] <= Minden objektum 1. kulcsát
+  return cards.map((card) => Object.keys(card)); //Object.keys -> Visszaadja minden objektum kulcsát
 }
 
 function startGame() {
   shuffleDeck(deck); // Pakli keverése
-  dealCardsForPlayerAndComputer(); // Lapok kiosztása
+  dealCardsForPlayerAndComputer(); // Lapok kiosztása. Ezen belül van meghívva a updateGameTable().
   playerKeys = getCardKeys(playerCards); // Játékos lapjainak az értékének visszaadása
   computerKeys = getCardKeys(computerCards); // Computer lapjainak az értékének visszaadása
   renderDatas();
@@ -184,16 +183,30 @@ computerKeys
 
 startButton.addEventListener("click", startGame);
 
-playerGameTable.addEventListener('click', (event) => {
-  debugger;
-  if (event.target.tagName === 'IMG') { //A tagName egy adott DOM elem HTML tagjának nevét adja vissza. Jelen esetben a playerGameTable-ben szereplőkét.
-    gameField.appendChild(event.target)
-    let imgSrc = event.target.src; // A target src attribútumát nyerjük ki
-    let index = playerCards.indexOf(imgSrc); // Az indexOf megkeresi az adott elem első előfordulási indexét a tömbben. 0 vagy nagyobb az index, akkor tartalmazza, ha -1 akkor nem
+playerGameTable.addEventListener("click", (event) => {
+  if (event.target.tagName === "IMG") {
+    //A tagName egy adott DOM elem HTML tagjának nevét adja vissza. Jelen esetben a playerGameTable-ben szereplőkét.
+    gameField.appendChild(event.target);
+    let imgAlt = event.target.alt;
+    let index = playerCards.findIndex((card) => {
+      let cardHtml = Object.keys(card)[0];
+      let tempDiv = document.createElement("div");
+      tempDiv.innerHTML = cardHtml;
+      return tempDiv.textContent === imgAlt;
+    });
     if (index > -1) {
-      playerCards.splice(index, 1) // index = A pozíció ahonnan az elemet el akarjuk távolítani, 1 = Az eltávolítani kívánt elemek száma.
+      playerCards.splice(index, 1);
+      updateGameTable(playerCards, playerGameTable);
+      let myIndex = playerKeys.indexOf(imgAlt);
+      playerKeys.splice(myIndex, 1);
+      console.log(playerKeys); // Ezt később törölni !!
+    } else {
+      alert("Hiba!");
     }
   }
-})
+  renderDatas();
+});
+
+// playerKeys tömbből kinyerni azt az értéket, amelyiket beraktuk a gameField-be.
 
 // https://sentry.io/answers/remove-specific-item-from-array/
