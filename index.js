@@ -3,90 +3,97 @@ let computerGameTable = document.querySelector(".js-computer-table");
 let dataField = document.querySelector(".js-datas");
 let gameField = document.querySelector(".js-gamefield");
 
-let playerCards = [];
-let playerKeys = [];
-let computerCards = [];
-let computerKeys = [];
+let playerCards = []; // játékos lapjai
+let playerKeys = []; // computer lapjai
+let playerEarnedCards = []; // játékos megszerzett lapok
+let playerCurrentKey = "";
+
+let computerCards = []; // játékos lap értékei
+let computerKeys = []; // computer lap értékei
+let computerEarnedCards = []; // computer megszerzett lapok
+let computerCurrentKey = "";
+
+let playerCardOnTable = ""; // asztalon lévő lapok
 
 // Buttons
 let startButton = document.querySelector(".js-start-button");
 
 const deck = [
-  [{ L2: '<img src=".//card-images//cards-medium//leaf-unter.png" alt="L2">' }],
-  [{ L3: '<img src=".//card-images//cards-medium//leaf-ober.png" alt="L3">' }],
-  [{ L4: '<img src=".//card-images//cards-medium//leaf-king.png" alt="L4">' }],
-  [{ L7: '<img src=".//card-images//cards-medium//leaf-seven.png" alt="L7">' }],
-  [{ L8: '<img src=".//card-images//cards-medium//leaf-eight.png" alt="L8">' }],
-  [{ L9: '<img src=".//card-images//cards-medium//leaf-nine.png" alt="L9">' }],
-  [{ L10: '<img src=".//card-images//cards-medium//leaf-ten.png" alt="L10">' }],
-  [{ L11: '<img src=".//card-images//cards-medium//leaf-ace.png" alt="L11">' }],
+  [{ 2: '<img src=".//card-images//cards-medium//leaf-unter.png" alt="L2">' }],
+  [{ 3: '<img src=".//card-images//cards-medium//leaf-ober.png" alt="L3">' }],
+  [{ 4: '<img src=".//card-images//cards-medium//leaf-king.png" alt="L4">' }],
+  [{ 7: '<img src=".//card-images//cards-medium//leaf-seven.png" alt="L7">' }],
+  [{ 8: '<img src=".//card-images//cards-medium//leaf-eight.png" alt="L8">' }],
+  [{ 9: '<img src=".//card-images//cards-medium//leaf-nine.png" alt="L9">' }],
+  [{ 10: '<img src=".//card-images//cards-medium//leaf-ten.png" alt="L10">' }],
+  [{ 11: '<img src=".//card-images//cards-medium//leaf-ace.png" alt="L11">' }],
 
   [
     {
-      H2: '<img src=".//card-images//cards-medium//heart-unter.png" alt="H2">',
+      2: '<img src=".//card-images//cards-medium//heart-unter.png" alt="H2">',
     },
   ],
-  [{ H3: '<img src=".//card-images//cards-medium//heart-ober.png" alt="H3">' }],
-  [{ H4: '<img src=".//card-images//cards-medium//heart-king.png" alt="H4">' }],
+  [{ 3: '<img src=".//card-images//cards-medium//heart-ober.png" alt="H3">' }],
+  [{ 4: '<img src=".//card-images//cards-medium//heart-king.png" alt="H4">' }],
   [
     {
-      H7: '<img src=".//card-images//cards-medium//heart-seven.png" alt="H7">',
-    },
-  ],
-  [
-    {
-      H8: '<img src=".//card-images//cards-medium//heart-eight.png" alt="H8">',
-    },
-  ],
-  [{ H9: '<img src=".//card-images//cards-medium//heart-nine.png" alt="H9">' }],
-  [
-    {
-      H10: '<img src=".//card-images//cards-medium//heart-ten.png" alt="H10">',
+      7: '<img src=".//card-images//cards-medium//heart-seven.png" alt="H7">',
     },
   ],
   [
     {
-      H11: '<img src=".//card-images//cards-medium//heart-ace.png" alt="H11">',
+      8: '<img src=".//card-images//cards-medium//heart-eight.png" alt="H8">',
+    },
+  ],
+  [{ 9: '<img src=".//card-images//cards-medium//heart-nine.png" alt="H9">' }],
+  [
+    {
+      10: '<img src=".//card-images//cards-medium//heart-ten.png" alt="H10">',
+    },
+  ],
+  [
+    {
+      11: '<img src=".//card-images//cards-medium//heart-ace.png" alt="H11">',
     },
   ],
 
   [
     {
-      A2: '<img src=".//card-images//cards-medium//acorn-unter.png" alt="A2">',
+      2: '<img src=".//card-images//cards-medium//acorn-unter.png" alt="A2">',
     },
   ],
-  [{ A3: '<img src=".//card-images//cards-medium//acorn-ober.png" alt="A3">' }],
-  [{ A4: '<img src=".//card-images//cards-medium//acorn-king.png" alt="A4">' }],
+  [{ 3: '<img src=".//card-images//cards-medium//acorn-ober.png" alt="A3">' }],
+  [{ 4: '<img src=".//card-images//cards-medium//acorn-king.png" alt="A4">' }],
   [
     {
-      A7: '<img src=".//card-images//cards-medium//acorn-seven.png" alt="A7">',
-    },
-  ],
-  [
-    {
-      A8: '<img src=".//card-images//cards-medium//acorn-eight.png" alt="A8">',
-    },
-  ],
-  [{ A9: '<img src=".//card-images//cards-medium//acorn-nine.png" alt="A9">' }],
-  [
-    {
-      A10: '<img src=".//card-images//cards-medium//acorn-ten.png" alt="A10">',
+      7: '<img src=".//card-images//cards-medium//acorn-seven.png" alt="A7">',
     },
   ],
   [
     {
-      A11: '<img src=".//card-images//cards-medium//acorn-ace.png" alt="A11">',
+      8: '<img src=".//card-images//cards-medium//acorn-eight.png" alt="A8">',
+    },
+  ],
+  [{ 9: '<img src=".//card-images//cards-medium//acorn-nine.png" alt="A9">' }],
+  [
+    {
+      10: '<img src=".//card-images//cards-medium//acorn-ten.png" alt="A10">',
+    },
+  ],
+  [
+    {
+      11: '<img src=".//card-images//cards-medium//acorn-ace.png" alt="A11">',
     },
   ],
 
-  [{ B2: '<img src=".//card-images//cards-medium//bell-unter.png" alt="B2">' }],
-  [{ B3: '<img src=".//card-images//cards-medium//bell-ober.png" alt="B3">' }],
-  [{ B4: '<img src=".//card-images//cards-medium//bell-king.png" alt="B4">' }],
-  [{ B7: '<img src=".//card-images//cards-medium//bell-seven.png" alt="B7">' }],
-  [{ B8: '<img src=".//card-images//cards-medium//bell-eight.png" alt="B8">' }],
-  [{ B9: '<img src=".//card-images//cards-medium//bell-nine.png" alt="B9">' }],
-  [{ B10: '<img src=".//card-images//cards-medium//bell-ten.png" alt="B10">' }],
-  [{ B11: '<img src=".//card-images//cards-medium//bell-ace.png" alt="B11">' }],
+  [{ 2: '<img src=".//card-images//cards-medium//bell-unter.png" alt="B2">' }],
+  [{ 3: '<img src=".//card-images//cards-medium//bell-ober.png" alt="B3">' }],
+  [{ 4: '<img src=".//card-images//cards-medium//bell-king.png" alt="B4">' }],
+  [{ 7: '<img src=".//card-images//cards-medium//bell-seven.png" alt="B7">' }],
+  [{ 8: '<img src=".//card-images//cards-medium//bell-eight.png" alt="B8">' }],
+  [{ 9: '<img src=".//card-images//cards-medium//bell-nine.png" alt="B9">' }],
+  [{ 10: '<img src=".//card-images//cards-medium//bell-ten.png" alt="B10">' }],
+  [{ 11: '<img src=".//card-images//cards-medium//bell-ace.png" alt="B11">' }],
 ];
 
 let gameTable = document.querySelector(".js-game-table");
@@ -153,17 +160,93 @@ function getCardKeys(cards) {
   return cards.map((card) => Object.keys(card)); //Object.keys -> Visszaadja minden objektum kulcsát
 }
 
-function startGame() {
+// A játékos kártyát választ, és tesz az asztalra.
+
+function playerManageCards() {
+  return new Promise((resolve) => {
+    function handleClick(event) {
+      if (event.target.tagName === "IMG") {
+        //A tagName egy adott DOM elem HTML tagjának nevét adja vissza. Jelen esetben a playerGameTable-ben szereplőkét.
+        gameField.appendChild(event.target);
+        let imgAlt = event.target.alt;
+        let index = playerCards.findIndex((card) => {
+          let cardHtml = Object.values(card)[0];
+          return cardHtml.includes(imgAlt);
+        });
+        if (index > -1) {
+          playerCards.splice(index, 1);
+          updateGameTable(playerCards, playerGameTable);
+          let myIndex = playerKeys.findIndex((key) => key == imgAlt);
+          playerCurrentKey = Number(imgAlt.slice(1)); // pl.: imgAlt = H2 => Number(2) az eredmény. (vagy imgAlt.substring(1),de ezt is át kell alakítani Number-típussá)
+          playerCardOnTable = playerCurrentKey;
+          console.log(typeof playerCurrentKey);
+          playerKeys.splice(myIndex, 1); // Ezt eltárolni, mert ezzel kell összehasonlítani a computer lapját!!!!!!!!!!!!
+          console.log("playerKeys:", playerKeys); // Ezt később törölni !!
+        } else {
+          alert("Hiba!");
+        }
+        renderDatas();
+        playerGameTable.removeEventListener("click", handleClick); // Eseményfigyelő eltávolítása
+        resolve(); // A Promise teljesítése
+      }
+    }
+
+    playerGameTable.addEventListener("click", handleClick);
+  });
+}
+
+function computerManageCards() {
+  // A computerKeys tartalmazza-e a playerCardOnTable értékét?
+  let isContains = computerKeys.indexOf(playerCardOnTable.toString()); //Megkeresi, hogy melyik indexen található a playerCardsOnTable
+  if (isContains >= 0) {
+    // Ebben az esetben van olyan lapja, amit a játékos lerakott, vagyis ezt a lapot kell raknia a computernek.
+    computerKeys.splice(isContains, 1); // a computerKeys tömbből ből eltávolítva.
+    computerCurrentKey = computerKeys[isContains]; // Ez lehet hogy nem kell.
+    let computerIndex = computerCards.findIndex((card) => {
+      // Keresés a computerCards tömbben az adott kártya alapján
+      let cardHtml = Object.keys(card)[0];
+      return cardHtml.includes(`${(alt = playerCardOnTable)}`);
+    });
+    if (computerIndex >= 0) {
+      let cardhtml = Object.values(computerCards[computerIndex]); // computerCards tömb computerIndex-en található objektum értékét adja vissza.
+      let tempDiv = document.createElement("div");
+      tempDiv.innerHTML = cardhtml;
+      gameField.appendChild(tempDiv.firstChild);
+      computerCards.splice(computerIndex, 1); // kártya eltávolítása a computerCards tömbből.
+    } else {
+      alert("Hiba!");
+    }
+    updateGameTable(computerCards, computerGameTable);
+    renderDatas();
+  } else {
+    alert("Nincs ilyen lapja.");
+  }
+}
+
+async function playerTurn() {
+  await playerManageCards();
+}
+
+async function computerTurn() {
+  setTimeout(() => {
+    computerManageCards();
+  }, 1000);
+}
+
+async function startGame() {
   shuffleDeck(deck); // Pakli keverése
   dealCardsForPlayerAndComputer(); // Lapok kiosztása. Ezen belül van meghívva a updateGameTable().
-  playerKeys = getCardKeys(playerCards); // Játékos lapjainak az értékének visszaadása
-  computerKeys = getCardKeys(computerCards); // Computer lapjainak az értékének visszaadása
+  playerKeys = getCardKeys(playerCards).flat(); // Játékos lapjainak az értékének visszaadása
+  computerKeys = getCardKeys(computerCards).flat(); // Computer lapjainak az értékének visszaadása
   renderDatas();
   isDisabled();
   console.log("playerCards", playerCards);
   console.log(computerCards);
   console.log(playerKeys);
   console.log(computerKeys);
+  // Első kör levezetése
+  await playerTurn();
+  await computerTurn();
 }
 
 /* 
@@ -182,30 +265,6 @@ computerKeys
 // Button events
 
 startButton.addEventListener("click", startGame);
-
-playerGameTable.addEventListener("click", (event) => {
-  if (event.target.tagName === "IMG") {
-    //A tagName egy adott DOM elem HTML tagjának nevét adja vissza. Jelen esetben a playerGameTable-ben szereplőkét.
-    gameField.appendChild(event.target);
-    let imgAlt = event.target.alt;
-    let index = playerCards.findIndex((card) => {
-      let cardHtml = Object.keys(card)[0];
-      let tempDiv = document.createElement("div");
-      tempDiv.innerHTML = cardHtml;
-      return tempDiv.textContent === imgAlt;
-    });
-    if (index > -1) {
-      playerCards.splice(index, 1);
-      updateGameTable(playerCards, playerGameTable);
-      let myIndex = playerKeys.indexOf(imgAlt);
-      playerKeys.splice(myIndex, 1);
-      console.log(playerKeys); // Ezt később törölni !!
-    } else {
-      alert("Hiba!");
-    }
-  }
-  renderDatas();
-});
 
 // playerKeys tömbből kinyerni azt az értéket, amelyiket beraktuk a gameField-be.
 
