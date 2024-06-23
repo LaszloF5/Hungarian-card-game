@@ -7,20 +7,29 @@ let playerCards = []; // játékos lapjai
 let playerKeys = []; // computer lapjai
 let playerEarnedCards = []; // játékos megszerzett lapok
 let playerCurrentKey = "";
+let playerImgAlt = "";
+let playerPoints = 0;
 
 let computerCards = []; // játékos lap értékei
 let computerKeys = []; // computer lap értékei
 let computerEarnedCards = []; // computer megszerzett lapok
 let computerCurrentKey = "";
+let computerImgAlt = "";
+let computerPoints = 0;
 
 // Buttons
 let startButton = document.querySelector(".js-start-button");
+let tempCardholder = [];
 
 const deck = [
   [{ 2: '<img src=".//card-images//cards-medium//leaf-unter.png" alt="L2">' }],
   [{ 3: '<img src=".//card-images//cards-medium//leaf-ober.png" alt="L3">' }],
   [{ 4: '<img src=".//card-images//cards-medium//leaf-king.png" alt="L4">' }],
-  [{ 7: '<img src=".//card-images//cards-medium//leaf-seven.png" alt="L7">' }],
+  [
+    {
+      12: '<img src=".//card-images//cards-medium//leaf-seven.png" alt="L12">',
+    },
+  ],
   [{ 8: '<img src=".//card-images//cards-medium//leaf-eight.png" alt="L8">' }],
   [{ 9: '<img src=".//card-images//cards-medium//leaf-nine.png" alt="L9">' }],
   [{ 10: '<img src=".//card-images//cards-medium//leaf-ten.png" alt="L10">' }],
@@ -35,7 +44,7 @@ const deck = [
   [{ 4: '<img src=".//card-images//cards-medium//heart-king.png" alt="H4">' }],
   [
     {
-      7: '<img src=".//card-images//cards-medium//heart-seven.png" alt="H7">',
+      12: '<img src=".//card-images//cards-medium//heart-seven.png" alt="H12">',
     },
   ],
   [
@@ -64,7 +73,7 @@ const deck = [
   [{ 4: '<img src=".//card-images//cards-medium//acorn-king.png" alt="A4">' }],
   [
     {
-      7: '<img src=".//card-images//cards-medium//acorn-seven.png" alt="A7">',
+      12: '<img src=".//card-images//cards-medium//acorn-seven.png" alt="A12">',
     },
   ],
   [
@@ -87,7 +96,11 @@ const deck = [
   [{ 2: '<img src=".//card-images//cards-medium//bell-unter.png" alt="B2">' }],
   [{ 3: '<img src=".//card-images//cards-medium//bell-ober.png" alt="B3">' }],
   [{ 4: '<img src=".//card-images//cards-medium//bell-king.png" alt="B4">' }],
-  [{ 7: '<img src=".//card-images//cards-medium//bell-seven.png" alt="B7">' }],
+  [
+    {
+      12: '<img src=".//card-images//cards-medium//bell-seven.png" alt="B12">',
+    },
+  ],
   [{ 8: '<img src=".//card-images//cards-medium//bell-eight.png" alt="B8">' }],
   [{ 9: '<img src=".//card-images//cards-medium//bell-nine.png" alt="B9">' }],
   [{ 10: '<img src=".//card-images//cards-medium//bell-ten.png" alt="B10">' }],
@@ -99,11 +112,14 @@ let gameTable = document.querySelector(".js-game-table");
 // Adatok megjelenítése
 function renderDatas() {
   dataField.innerHTML = `
-       <li>Player pontszerző lapok száma: </li>
+       <li>Player pontszerző lapok száma: ${playerPoints}</li>
+       <li>Player megszerzett lapok száma: </li>
        <li>Player lapjainak az értéke: ${playerKeys} </li>
-       <li>Computer pontszerző lapok száma: </li>
+       <li>Computer pontszerző lapok száma: ${computerPoints}</li>
+       <li>Computer megszerzett lapok száma: </li>
        <li>Computer lapjainak az értéke: ${computerKeys} </li>
        <li>Pakliban lévő lapok száma: ${deck.length}</li>
+       <li>Asztalon lévő lapok értéke: ${tempCardholder}</li>
        `;
 }
 
@@ -160,32 +176,55 @@ function getCardKeys(cards) {
 
 // A játékos kártyát választ, és tesz az asztalra.
 
+// TODO: A függvényben kell egy olyan módosítás, hogy ha kevesebb lapja van a játékosnak mint 4, akkor csak olyan lapot lehessen lerakni ami a kezdő lap, vagy 7-est.
 function playerManageCards() {
   return new Promise((resolve) => {
     function handleClick(event) {
       if (event.target.tagName === "IMG") {
-        //A tagName egy adott DOM elem HTML tagjának nevét adja vissza. Jelen esetben a playerGameTable-ben szereplőkét.
-        gameField.appendChild(event.target);
-        let imgAlt = event.target.alt;
-        let index = playerCards.findIndex((card) => {
-          let cardHtml = Object.values(card)[0];
-          return cardHtml.includes(imgAlt);
-        });
-        if (index > -1) {
-          playerCards.splice(index, 1);
-          updateGameTable(playerCards, playerGameTable);
-          let myIndex = playerKeys.findIndex((key) => key == imgAlt);
-          playerCurrentKey = Number(imgAlt.slice(1)); // pl.: imgAlt = H2 => Number(2) az eredmény. (vagy imgAlt.substring(1),de ezt is át kell alakítani Number-típussá)
-          console.log(typeof playerCurrentKey);
-          playerKeys.splice(myIndex, 1); // Ezt eltárolni, mert ezzel kell összehasonlítani a computer lapját!!!!!!!!!!!!
-          console.log("playerKeys:", playerKeys); // Ezt később törölni !!
+        let selectedAlt = event.target.alt;
+        let selectedKey = Number(selectedAlt.slice(1));
+
+        // Ellenőrzi, hogy van-e kártya a gameField-ben
+        if (gameField.childElementCount === 0) {
+          // Ha nincs kártya, bármilyen kártyát le lehet rakni
+          gameField.appendChild(event.target);
+          processPlayerCard(selectedAlt);
+          resolve();
         } else {
-          alert("Hiba!");
+          let firstCardAlt = gameField.firstChild.alt;
+          let firstCardKey = Number(firstCardAlt.slice(1));
+
+          // Ellenőrzi, hogy csak akkor engedélyezi a kártya lerakását, ha a kulcsok megegyeznek, vagy ha a kártya értéke 12
+          if (selectedKey === firstCardKey || selectedKey === 12) {
+            gameField.appendChild(event.target);
+            processPlayerCard(selectedAlt);
+            resolve();
+          } else {
+            alert(
+              "Csak olyan értékű kártyát választhatsz, mint az első lerakott kártya vagy 12-es értékűt!"
+            );
+          }
         }
-        renderDatas();
-        playerGameTable.removeEventListener("click", handleClick); // Eseményfigyelő eltávolítása
-        resolve(); // A Promise teljesítése
       }
+    }
+
+    function processPlayerCard(selectedAlt) {
+      let index = playerCards.findIndex((card) => {
+        let cardHtml = Object.values(card)[0];
+        return cardHtml.includes(selectedAlt);
+      });
+      if (index > -1) {
+        playerCards.splice(index, 1);
+        updateGameTable(playerCards, playerGameTable);
+        playerImgAlt = selectedAlt;
+        playerCurrentKey = Number(selectedAlt.slice(1));
+        tempCardholder.push(playerCurrentKey);
+        playerKeys.splice(index, 1);
+      } else {
+        alert("Hiba!");
+      }
+      renderDatas();
+      playerGameTable.removeEventListener("click", handleClick);
     }
 
     playerGameTable.addEventListener("click", handleClick);
@@ -193,64 +232,148 @@ function playerManageCards() {
 }
 
 function computerManageCards() {
-  // A computerKeys tartalmazza-e a playerCurrentKey értékét?
   let isContains = computerKeys.indexOf(playerCurrentKey.toString());
+
+  // Speciális eset: Ha a játékos értékes lapot rak le, megvizsgáljuk, hogy a computer legalább 2 ugyanolyan értékes lappal rendelkezik-e.
+  if (playerCurrentKey >= 10) {
+    let sameValueCount = computerKeys.filter(key => key === playerCurrentKey.toString()).length;
+    if (sameValueCount >= 2) {
+      isContains = computerKeys.indexOf(playerCurrentKey.toString());
+      if (isContains >= 0) {
+        computerCurrentKey = computerKeys[isContains];
+        tempCardholder.push(computerCurrentKey);
+        computerKeys.splice(isContains, 1);
+        let computerIndex = computerCards.findIndex((card) => {
+          let cardKey = Object.keys(card)[0];
+          return cardKey == playerCurrentKey.toString();
+        });
+        if (computerIndex >= 0) {
+          let cardHtml = Object.values(computerCards[computerIndex])[0];
+          let tempDiv = document.createElement("div");
+          tempDiv.innerHTML = cardHtml;
+          gameField.appendChild(tempDiv.firstChild);
+          computerCards.splice(computerIndex, 1);
+        }
+      }
+    }
+  }
+
+  // A computerKeys tartalmazza-e a playerCurrentKey értékét?
   if (isContains >= 0) {
-    // Ebben az esetben van olyan lapja, amit a játékos lerakott, vagyis ezt a lapot kell raknia a computernek.
     computerCurrentKey = computerKeys[isContains];
-    computerKeys.splice(isContains, 1); // a computerKeys tömbből eltávolítva.
+    tempCardholder.push(computerCurrentKey);
+    computerKeys.splice(isContains, 1);
     let computerIndex = computerCards.findIndex((card) => {
-      // Keresés a computerCards tömbben az adott kártya alapján
       let cardKey = Object.keys(card)[0];
-      return cardKey == playerCurrentKey;
+      return cardKey == playerCurrentKey.toString();
     });
     if (computerIndex >= 0) {
-      let cardHtml = Object.values(computerCards[computerIndex])[0]; // computerCards tömb computerIndex-en található objektum értékét adja vissza.
+      let cardHtml = Object.values(computerCards[computerIndex])[0];
       let tempDiv = document.createElement("div");
       tempDiv.innerHTML = cardHtml;
       gameField.appendChild(tempDiv.firstChild);
-      computerCards.splice(computerIndex, 1); // kártya eltávolítása a computerCards tömbből.
+      computerCards.splice(computerIndex, 1);
     } else {
-      alert("Hiba!");
+      alert("2. Hiba!");
     }
   } else {
     const validWorthlessKeys = ["2", "3", "4", "8", "9"];
-    let isContains = computerKeys.findIndex((element) => validWorthlessKeys.includes(element));
+    isContains = computerKeys.findIndex((element) =>
+      validWorthlessKeys.includes(element)
+    );
     if (isContains == -1) {
-      const validWorthKeys = ["7", "10", "11"];
-      isContains = computerKeys.findIndex((element) => validWorthKeys.includes(element));
+      const validWorthKeys = ["12", "10", "11"];
+      isContains = computerKeys.findIndex((element) =>
+        validWorthKeys.includes(element)
+      );
     }
     if (isContains >= 0) {
       computerCurrentKey = computerKeys[isContains];
+      tempCardholder.push(computerCurrentKey);
       computerKeys.splice(isContains, 1);
       let computerIndex = computerCards.findIndex((card) => {
-        // Keresés a computerCards tömbben az adott kártya alapján
         let cardKey = Object.keys(card)[0];
         return cardKey == computerCurrentKey;
       });
       if (computerIndex >= 0) {
-        let cardHtml = Object.values(computerCards[computerIndex])[0]; // computerCards tömb computerIndex-en található objektum értékét adja vissza.
+        let cardHtml = Object.values(computerCards[computerIndex])[0];
         let tempDiv = document.createElement("div");
         tempDiv.innerHTML = cardHtml;
         gameField.appendChild(tempDiv.firstChild);
-        computerCards.splice(computerIndex, 1); // kártya eltávolítása a computerCards tömbből.
+        computerCards.splice(computerIndex, 1);
       } else {
-        alert("Hiba!");
+        alert("3. Hiba!");
       }
     }
   }
+
+  console.log("Computer selected card alt:", computerImgAlt); // Ellenőrzés céljából kiíratás, később törlésre kerül.
   updateGameTable(computerCards, computerGameTable);
   renderDatas();
 }
 
+
 async function playerTurn() {
-  await playerManageCards();
+  if (playerKeys.length < 4) {
+    if (
+      playerKeys.includes(gameField.firstChild.alt.slice(1)) ||
+      playerKeys.includes("12")
+    ) {
+      alert("Most jó helyen vagyunk! :D");
+      await playerManageCards();
+    } else {
+      alert("Nincs ilyen lapom.");
+    }
+  } else {
+    await playerManageCards();
+  }
 }
 
 async function computerTurn() {
   setTimeout(() => {
     computerManageCards();
   }, 1000);
+}
+
+// ha a játékos vitte a lapokat, vagyis ő kezdi a következő kört.
+async function nextPlayerRound() {
+  await playerTurn();
+  await computerTurn();
+}
+
+// ha a computer vitte a lapokat, vagyis ő kezdi a következő kört.
+async function nextComputerRound() {
+  await computerTurn();
+  await playerTurn();
+}
+
+async function kiertekeles() {
+  // Ebben a feltételben kezelve van az, hogy ha a computer lerak a játékos lapjára egy 7-est, a játékos tudjon rá reagálni.
+  if (playerCurrentKey == computerCurrentKey || gameField.lastChild.alt.slice(1) === "7") {
+    alert("Round 2");
+    await nextPlayerRound(); // A következő kör elindítása játékos kezdéssel
+  } else {
+    let firstCardValue = gameField.firstChild.alt.slice(1); // A játékos első lapjának értéke
+    let lastCardValue = gameField.lastChild.alt.slice(1); // Az utolsó lerakott lap értéke
+    if (
+      (firstCardValue === lastCardValue || lastCardValue.slice(1) === "12") &&
+      computerImgAlt === lastCardValue
+    ) {
+      alert("A computer viszi a lapokat.");
+      await handleComputerWins(); // Számítógép nyerése esetén lapok húzása és frissítés
+    } else {
+      alert("A játékos viszi a lapokat.");
+      await handlePlayerWins(); // Játékos nyerése esetén lapok húzása és frissítés
+    }
+  }
+  await roundEvaluation(); // Következő kör kiértékelése
+}
+
+async function roundEvaluation() {
+  // aki utoljára helyezte le a kártyalapot, megmutatja, hogy melyik játékos kezdte a kört : gameField.lastChild.alt[1];
+  setTimeout(() => {
+    kiertekeles();
+  }, 1500);
 }
 
 async function startGame() {
@@ -267,6 +390,7 @@ async function startGame() {
   // Első kör levezetése
   await playerTurn();
   await computerTurn();
+  await roundEvaluation();
 }
 
 /* 
@@ -275,17 +399,7 @@ async function startGame() {
     Ezt követően kiértékelés következik kulcs alapján. Lerakott lap kulcsa megtalálható-e az computerKeys tömbben. 
 */
 
-/*
-playerCards;
-playerKeys;
-computerCards;
-computerKeys
- */
-
 // Button events
-
-startButton.addEventListener("click", startGame);
-
 // playerKeys tömbből kinyerni azt az értéket, amelyiket beraktuk a gameField-be.
 
-// https://sentry.io/answers/remove-specific-item-from-array/
+startButton.addEventListener("click", startGame);
