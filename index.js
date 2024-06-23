@@ -13,8 +13,6 @@ let computerKeys = []; // computer lap értékei
 let computerEarnedCards = []; // computer megszerzett lapok
 let computerCurrentKey = "";
 
-let playerCardOnTable = ""; // asztalon lévő lapok
-
 // Buttons
 let startButton = document.querySelector(".js-start-button");
 
@@ -133,7 +131,7 @@ function dealCard(deck) {
 
 // Játékasztal frissítése függvény (player, computer)
 function updateGameTable(cards, gameTable) {
-  gameTable.innerHTML = "";
+  gameTable.innerHTML = ""; // Ez a 2. körtől kezdve nem lesz jó. Nem kell renderelni a gameTable-t
   cards.forEach((card) => {
     //TODO: Átírni for ciklussá.
     const cardHtml = Object.values(card); //imgs // A playerCards egy szájbak*rt tömb!
@@ -178,7 +176,6 @@ function playerManageCards() {
           updateGameTable(playerCards, playerGameTable);
           let myIndex = playerKeys.findIndex((key) => key == imgAlt);
           playerCurrentKey = Number(imgAlt.slice(1)); // pl.: imgAlt = H2 => Number(2) az eredmény. (vagy imgAlt.substring(1),de ezt is át kell alakítani Number-típussá)
-          playerCardOnTable = playerCurrentKey;
           console.log(typeof playerCurrentKey);
           playerKeys.splice(myIndex, 1); // Ezt eltárolni, mert ezzel kell összehasonlítani a computer lapját!!!!!!!!!!!!
           console.log("playerKeys:", playerKeys); // Ezt később törölni !!
@@ -196,31 +193,54 @@ function playerManageCards() {
 }
 
 function computerManageCards() {
-  // A computerKeys tartalmazza-e a playerCardOnTable értékét?
-  let isContains = computerKeys.indexOf(playerCardOnTable.toString()); //Megkeresi, hogy melyik indexen található a playerCardsOnTable
+  // A computerKeys tartalmazza-e a playerCurrentKey értékét?
+  let isContains = computerKeys.indexOf(playerCurrentKey.toString());
   if (isContains >= 0) {
     // Ebben az esetben van olyan lapja, amit a játékos lerakott, vagyis ezt a lapot kell raknia a computernek.
-    computerKeys.splice(isContains, 1); // a computerKeys tömbből ből eltávolítva.
-    computerCurrentKey = computerKeys[isContains]; // Ez lehet hogy nem kell.
+    computerCurrentKey = computerKeys[isContains];
+    computerKeys.splice(isContains, 1); // a computerKeys tömbből eltávolítva.
     let computerIndex = computerCards.findIndex((card) => {
       // Keresés a computerCards tömbben az adott kártya alapján
-      let cardHtml = Object.keys(card)[0];
-      return cardHtml.includes(`${(alt = playerCardOnTable)}`);
+      let cardKey = Object.keys(card)[0];
+      return cardKey == playerCurrentKey;
     });
     if (computerIndex >= 0) {
-      let cardhtml = Object.values(computerCards[computerIndex]); // computerCards tömb computerIndex-en található objektum értékét adja vissza.
+      let cardHtml = Object.values(computerCards[computerIndex])[0]; // computerCards tömb computerIndex-en található objektum értékét adja vissza.
       let tempDiv = document.createElement("div");
-      tempDiv.innerHTML = cardhtml;
+      tempDiv.innerHTML = cardHtml;
       gameField.appendChild(tempDiv.firstChild);
       computerCards.splice(computerIndex, 1); // kártya eltávolítása a computerCards tömbből.
     } else {
       alert("Hiba!");
     }
-    updateGameTable(computerCards, computerGameTable);
-    renderDatas();
   } else {
-    alert("Nincs ilyen lapja.");
+    const validWorthlessKeys = ["2", "3", "4", "8", "9"];
+    let isContains = computerKeys.findIndex((element) => validWorthlessKeys.includes(element));
+    if (isContains == -1) {
+      const validWorthKeys = ["7", "10", "11"];
+      isContains = computerKeys.findIndex((element) => validWorthKeys.includes(element));
+    }
+    if (isContains >= 0) {
+      computerCurrentKey = computerKeys[isContains];
+      computerKeys.splice(isContains, 1);
+      let computerIndex = computerCards.findIndex((card) => {
+        // Keresés a computerCards tömbben az adott kártya alapján
+        let cardKey = Object.keys(card)[0];
+        return cardKey == computerCurrentKey;
+      });
+      if (computerIndex >= 0) {
+        let cardHtml = Object.values(computerCards[computerIndex])[0]; // computerCards tömb computerIndex-en található objektum értékét adja vissza.
+        let tempDiv = document.createElement("div");
+        tempDiv.innerHTML = cardHtml;
+        gameField.appendChild(tempDiv.firstChild);
+        computerCards.splice(computerIndex, 1); // kártya eltávolítása a computerCards tömbből.
+      } else {
+        alert("Hiba!");
+      }
+    }
   }
+  updateGameTable(computerCards, computerGameTable);
+  renderDatas();
 }
 
 async function playerTurn() {
