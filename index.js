@@ -21,6 +21,8 @@ let computerOwnedCards = 0;
 
 // Buttons
 let startButton = document.querySelector(".js-start-button");
+let playerPassButton = document.querySelector(".js-player-pass-button");
+
 let tempCardholder = [];
 let tempAnswer = "";
 
@@ -125,11 +127,12 @@ function renderDatas() {
        <li>Pakliban lévő lapok száma: ${deck.length}</li>
        <li>Asztalon lévő lapok értéke: ${tempCardholder}</li>
        `;
+  playerPassBtn();
 }
 
 function renderAfterRound() {
-  gameField.innerHTML = '';
-  dealCardsForPlayerAndComputer()
+  gameField.innerHTML = "";
+  dealCardsForPlayerAndComputer();
   tempCardholder = [];
   tempAnswer = "";
   playerKeys = getCardKeys(playerCards).flat();
@@ -143,6 +146,16 @@ function isDisabled() {
     startButton.disabled = false;
   } else {
     startButton.disabled = true;
+  }
+}
+
+//Player pass btn kezelése
+
+function playerPassBtn() {
+  if (playerCards.length === 4) {
+    playerPassButton.disabled = true;
+  } else {
+    playerPassButton.disabled = false;
   }
 }
 
@@ -214,7 +227,16 @@ function playerManageCards() {
             processPlayerCard(selectedAlt);
             resolve();
           } else {
+            if (
+              computerCards.length < 4 &&
+              playerCards.length > computerCards.length
+            ) {
+              gameField.appendChild(event.target);
+              processPlayerCard(selectedAlt);
+              resolve();
+            }
             alert(
+              // Ide kell egy gombot létrehozni, arra az esetre, ha nem akarok semmit rádobni, viszont akkor a computer viszi el a kört.
               "Csak olyan értékű kártyát választhatsz, mint az első lerakott kártya vagy 12-es értékűt!"
             );
           }
@@ -405,6 +427,8 @@ async function handleComputerWins() {
 
 async function kiertekeles() {
   // Ebben a feltételben kezelve van az, hogy ha a computer lerak a játékos lapjára egy 7-est, a játékos tudjon rá reagálni.
+  // Meg kell írni azokat az eseteket, hogy ha a computer rakja le az első lapot, akkor más lesz a kiértékelés.
+  // 1 if ág a computer kezdésnek,
   if (
     playerCurrentKey == computerCurrentKey ||
     gameField.lastChild.alt.slice(1) === "7"
@@ -416,11 +440,12 @@ async function kiertekeles() {
     }
     await nextPlayerRound(); // A következő kör elindítása játékos kezdéssel
   } else {
-    let firstCardValue = gameField.firstChild.alt.slice(1); // A játékos első lapjának értéke
+    let firstCardValue = gameField.firstChild.alt.slice(1); // Az első lerakott lap értéke
     let lastCardValue = gameField.lastChild.alt.slice(1); // Az utolsó lerakott lap értéke
     if (
-      (firstCardValue === lastCardValue || lastCardValue.slice(1) === "12") &&
-      computerImgAlt === lastCardValue
+      // (lastCardValue === "12" && lastCardValue === computerCurrentKey)
+      firstCardValue === computerCurrentKey &&
+      playerCurrentKey != "12"
     ) {
       alert("A computer viszi a lapokat.");
       handleComputerWins(); // Számítógép nyerése esetén lapok húzása és frissítés
