@@ -127,6 +127,16 @@ function renderDatas() {
        `;
 }
 
+function renderAfterRound() {
+  gameField.innerHTML = '';
+  dealCardsForPlayerAndComputer()
+  tempCardholder = [];
+  tempAnswer = "";
+  playerKeys = getCardKeys(playerCards).flat();
+  computerKeys = getCardKeys(computerCards).flat();
+  renderDatas();
+}
+
 // Start button kezelése (disabled)
 function isDisabled() {
   if (deck.length === 32) {
@@ -151,7 +161,7 @@ function dealCard(deck) {
 
 // Játékasztal frissítése függvény (player, computer)
 function updateGameTable(cards, gameTable) {
-  gameTable.innerHTML = ""; // Ez a 2. körtől kezdve nem lesz jó. Nem kell renderelni a gameTable-t
+  gameTable.innerHTML = "";
   cards.forEach((card) => {
     //TODO: Átírni for ciklussá.
     const cardHtml = Object.values(card); //imgs // A playerCards egy szájbak*rt tömb!
@@ -161,7 +171,7 @@ function updateGameTable(cards, gameTable) {
 
 // Játékosok lapjainak kiosztása
 function dealCardsForPlayerAndComputer() {
-  for (let i = 0; i < 4; i += 1) {
+  for (let i = playerCards.length; i < 4; i += 1) {
     let dealtPlayerCard = dealCard(deck);
     playerCards.push(dealtPlayerCard);
 
@@ -365,24 +375,30 @@ async function nextComputerRound() {
 
 /****  Kiértékelés függvények ****/
 
-function handlePlayerWins() {
+async function handlePlayerWins() {
   for (let i = 0; i < tempCardholder.length; ++i) {
     playerOwnedCards += 1;
     if (tempCardholder[i] >= 10 && tempCardholder[i] < 12) {
       playerPoints += 1;
     }
   }
-  renderDatas();
+  renderAfterRound();
+  await playerTurn();
+  await computerTurn();
+  await roundEvaluation();
 }
 
-function handleComputerWins() {
+async function handleComputerWins() {
   for (let i = 0; i < tempCardholder.length; ++i) {
     computerOwnedCards += 1;
     if (tempCardholder[i] >= 10 && tempCardholder[i] < 12) {
       computerPoints += 1;
     }
   }
-  renderDatas();
+  renderAfterRound();
+  await computerTurn();
+  await playerTurn();
+  await roundEvaluation();
 }
 
 /*********************************/
@@ -432,10 +448,6 @@ async function startGame() {
   computerKeys = getCardKeys(computerCards).flat(); // Computer lapjainak az értékének visszaadása
   renderDatas();
   isDisabled();
-  console.log("playerCards", playerCards);
-  console.log(computerCards);
-  console.log(playerKeys);
-  console.log(computerKeys);
   // Első kör levezetése
   await playerTurn();
   await computerTurn();
