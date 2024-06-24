@@ -169,7 +169,11 @@ function shuffleDeck(deck) {
 
 //Pakliból kártyalapok kivétele
 function dealCard(deck) {
-  return deck.shift()[0];
+  if(deck.length > 0) {
+    return deck.shift()[0];
+  } else {
+    return null;
+  }
 }
 
 // Játékasztal frissítése függvény (player, computer)
@@ -184,12 +188,14 @@ function updateGameTable(cards, gameTable) {
 
 // Játékosok lapjainak kiosztása
 function dealCardsForPlayerAndComputer() {
-  for (let i = playerCards.length; i < 4; i += 1) {
-    let dealtPlayerCard = dealCard(deck);
-    playerCards.push(dealtPlayerCard);
-
-    let dealtComputerCard = dealCard(deck);
-    computerCards.push(dealtComputerCard);
+  if (deck.length > 0) {
+    for (let i = computerCards.length; i < 4; i += 1) {
+      let dealtPlayerCard = dealCard(deck);
+      playerCards.push(dealtPlayerCard);
+  
+      let dealtComputerCard = dealCard(deck);
+      computerCards.push(dealtComputerCard);
+    }
   }
 
   updateGameTable(playerCards, playerGameTable);
@@ -253,7 +259,7 @@ function playerManageCards() {
         playerCards.splice(index, 1);
         updateGameTable(playerCards, playerGameTable);
         playerImgAlt = selectedAlt;
-        playerCurrentKey = Number(selectedAlt.slice(1));
+        playerCurrentKey = Number(selectedAlt.slice(1)).toString();
         tempCardholder.push(playerCurrentKey);
         playerKeys.splice(index, 1);
       } else {
@@ -358,10 +364,12 @@ function computerManageCards() {
 }
 
 async function playerTurn() {
+  if (deck.length === 0) {
+    await playerManageCards();
+    return;
+  }
   if (playerKeys.length < 4) {
-    if (
-      playerKeys.includes(gameField.firstChild.alt.slice(1)) ||
-      playerKeys.includes("12")
+    if (playerKeys.includes(gameField.firstChild.alt.slice(1)) || playerKeys.includes("12")
     ) {
       alert("Most jó helyen vagyunk! :D");
       await playerManageCards();
@@ -442,11 +450,7 @@ async function kiertekeles() {
   } else {
     let firstCardValue = gameField.firstChild.alt.slice(1); // Az első lerakott lap értéke
     let lastCardValue = gameField.lastChild.alt.slice(1); // Az utolsó lerakott lap értéke
-    if (
-      // (lastCardValue === "12" && lastCardValue === computerCurrentKey)
-      firstCardValue === computerCurrentKey &&
-      playerCurrentKey != "12"
-    ) {
+    if ((firstCardValue === computerCurrentKey && playerCurrentKey != "12") || (firstCardValue === playerCurrentKey && computerCurrentKey === '12')) {
       alert("A computer viszi a lapokat.");
       handleComputerWins(); // Számítógép nyerése esetén lapok húzása és frissítés
       return false;
