@@ -40,3 +40,8 @@ img {
     border-radius: .5rem;
     background-color: black;
 }
+
+.computer-card {
+    border: 2px solid red;
+    border-radius: 12px;
+}
