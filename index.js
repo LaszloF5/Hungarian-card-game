@@ -326,57 +326,95 @@ function computerManageCards() {
         }
       }
     }
+  } else {
+    // Ha a gameField.childElementCount === 0, akkor a computer egy random lapot választ
+    let lowValueCards = computerKeys.filter((key) =>
+      ["2", "3", "4", "8", "9"].includes(key)
+    );
+    let randomCardKey;
+
+    if (lowValueCards.length > 0) {
+      randomCardKey =
+        lowValueCards[Math.floor(Math.random() * lowValueCards.length)];
+    } else {
+      randomCardKey =
+        computerKeys[Math.floor(Math.random() * computerKeys.length)];
+    }
+
+    isContains = computerKeys.indexOf(randomCardKey);
+    computerCurrentKey = computerKeys[isContains];
+    tempCardholder.push(computerCurrentKey);
+    computerKeys.splice(isContains, 1);
+
+    let computerIndex = computerCards.findIndex((card) => {
+      let cardKey = Object.keys(card)[0];
+      return cardKey == computerCurrentKey;
+    });
+    if (computerIndex >= 0) {
+      let cardHtml = Object.values(computerCards[computerIndex])[0];
+      let tempDiv = document.createElement("div");
+      tempDiv.innerHTML = cardHtml;
+      let cardElement = tempDiv.firstChild;
+      cardElement.classList.add("computer-card"); // Piros keret hozzáadása
+      gameField.appendChild(cardElement);
+      computerCards.splice(computerIndex, 1);
+      return;
+    }
   }
 
   // Speciális eset: Ha a játékos értékes lapot rak le, megvizsgáljuk, hogy a computer legalább 2 ugyanolyan értékes lappal rendelkezik-e.
-  if (playerCurrentKey >= 10) {
-    let sameValueCount = computerKeys.filter(
-      (key) => key === playerCurrentKey.toString()
-    ).length;
-    if (sameValueCount >= 2) {
-      isContains = computerKeys.indexOf(playerCurrentKey.toString());
-      if (isContains >= 0) {
-        computerCurrentKey = computerKeys[isContains];
-        tempCardholder.push(computerCurrentKey);
-        computerKeys.splice(isContains, 1);
+  // if (playerCurrentKey >= 10) {
+  //   let sameValueCount = computerKeys.filter(
+  //     (key) => key === playerCurrentKey.toString()
+  //   ).length;
+  //   if (sameValueCount >= 2) {
+  //     //  || computerKeys.includes("12")
+  //     isContains = computerKeys.indexOf(playerCurrentKey.toString());
+  //     // if (isContains === -1) {
+  //     //   isContains = computerKeys.indexOf("12");
+  //     //}
+  //     if (isContains >= 0) {
+  //       computerCurrentKey = computerKeys[isContains];
+  //       tempCardholder.push(computerCurrentKey);
+  //       computerKeys.splice(isContains, 1);
 
-        let computerIndex = computerCards.findIndex((card) => {
-          let cardKey = Object.keys(card)[0];
-          return cardKey == playerCurrentKey.toString();
-        });
-        if (computerIndex >= 0) {
-          let cardHtml = Object.values(computerCards[computerIndex])[0];
-          let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = cardHtml;
-          let cardElement = tempDiv.firstChild;
-          cardElement.classList.add("computer-card"); // Piros keret hozzáadása
-          gameField.appendChild(cardElement);
-          computerCards.splice(computerIndex, 1);
-          return;
-        }
-      }
-    } else if (computerKeys.includes('12')) {
-      isContains = computerKeys.indexOf('12');
-      computerCurrentKey = computerKeys[isContains];
-        tempCardholder.push(computerCurrentKey);
-        computerKeys.splice(isContains, 1);
+  //       let computerIndex = computerCards.findIndex((card) => {
+  //         let cardKey = Object.keys(card)[0];
+  //         return cardKey == playerCurrentKey.toString();
+  //       });
+  //       if (computerIndex >= 0) {
+  //         let cardHtml = Object.values(computerCards[computerIndex])[0];
+  //         let tempDiv = document.createElement("div");
+  //         tempDiv.innerHTML = cardHtml;
+  //         let cardElement = tempDiv.firstChild;
+  //         cardElement.classList.add("computer-card"); // Piros keret hozzáadása
+  //         gameField.appendChild(cardElement);
+  //         computerCards.splice(computerIndex, 1);
+  //         return;
+  //       }
+  //     }
+  //   } else if (computerKeys.includes("12")) {
+  //     isContains = computerKeys.indexOf("12");
+  //     computerCurrentKey = computerKeys[isContains];
+  //     tempCardholder.push(computerCurrentKey);
+  //     computerKeys.splice(isContains, 1);
 
-        let computerIndex = computerCards.findIndex((card) => {
-          let cardKey = Object.keys(card)[0];
-          return cardKey == playerCurrentKey.toString();
-        });
-        if (computerIndex >= 0) {
-          let cardHtml = Object.values(computerCards[computerIndex])[0];
-          let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = cardHtml;
-          let cardElement = tempDiv.firstChild;
-          cardElement.classList.add("computer-card"); // Piros keret hozzáadása
-          gameField.appendChild(cardElement);
-          computerCards.splice(computerIndex, 1);
-          return;
-        }
-    }
-  }
+  //     let computerIndex = computerCards.findIndex((card) => {
+  //       let cardKey = Object.keys(card)[0];
+  //       return cardKey = playerCurrentKey.toString(); // Itt volt 1 hiba, mert == jel volt, nem pedig = -jel.
+  //     });
+  //     if (computerIndex >= 0) {
+  //       let cardHtml = Object.values(computerCards[computerIndex])[0];
+  //       let tempDiv = document.createElement("div");
+  //       tempDiv.innerHTML = cardHtml;
+  //       let cardElement = tempDiv.firstChild;
+  //       cardElement.classList.add("computer-card"); // Piros keret hozzáadása
+  //       gameField.appendChild(cardElement);
+  //       computerCards.splice(computerIndex, 1);
+  //       return;
+  //     }
+  //   }
+  // }
 
   // A computerKeys tartalmazza-e a playerCurrentKey értékét?
   if (isContains >= 0 && firstCardKey >= 10) {
@@ -415,7 +453,13 @@ function computerManageCards() {
         validWorthKeys.includes(element)
       );
     }
-    if (isContains >= 0) {
+    if (isContains === -1) {
+      const validKeys = ["2", "3", "4", "8", "9", "10", "11", "12"];
+      isContains = computerKeys.findIndex((element) =>
+        validWorthlessKeys.includes(element)
+      );
+    }
+    if (isContains >= -0) {
       computerCurrentKey = computerKeys[isContains];
       tempCardholder.push(computerCurrentKey);
       computerKeys.splice(isContains, 1);
@@ -477,6 +521,8 @@ async function playerTurn() {
   }
   return tempAnswer;
 }
+
+// Módosítás következik: settimeout helyett await.
 
 async function computerTurn() {
   setTimeout(() => {
@@ -542,6 +588,67 @@ async function kiertekeles() {
   let firstCardValue = gameField.firstChild.alt.slice(1); // Az első lerakott lap értéke
   let lastCardValue = gameField.lastChild.alt.slice(1); // Az utolsó lerakott lap értéke
 
+  // Ha értéktelen lapra rak a player 12-es értékű lapot
+
+  if (gameField.firstChild.className === "computer-card" && playerCurrentKey === "12") {
+    handlePlayerWins();
+    return;
+  }
+
+  if (
+    firstCardValue === playerCurrentKey &&
+    playerCurrentKey === "12" &&
+    computerCurrentKey !== firstCardValue
+  ) {
+    handlePlayerWins();
+    return;
+  }
+
+  // Eset: Ha a player 10-est rak, a computer 11-est, a computer viszi a lapokat. Ez nem oké.
+  // if (firstCardValue === playerCurrentKey && (computerCurrentKey !== playerCurrentKey || computerCurrentKey !== "12")) {
+  //   alert('Vizsgáld meg.');
+  //   handlePlayerWins();
+  //   return;
+  // }
+
+  // A következő feltétel ellentéte
+        // Ezt és a következő feltételt lehet annyiban módosítani kell, hogy >== 4 legyen !!!!!!!!!!!!!!!!!!
+  if (
+    gameField.childElementCount === 4 &&
+    gameField.firstChild.className !== "computer-card"
+  ) {
+    if (
+      (playerCurrentKey === "12" || playerCurrentKey === firstCardValue) &&
+      (computerCurrentKey === firstCardValue || computerCurrentKey === "12") &&
+      (!playerKeys.includes(firstCardValue) || !playerKeys.includes("12"))
+    ) {
+      handleComputerWins();
+      return;
+    } else if (!computerCurrentKey === firstCardValue || !computerCurrentKey === "12"){
+      handlePlayerWins();
+      return;
+    } else {
+      await nextPlayerRound();
+    }
+  }
+
+  // Ha a számítógép nyitott, a játékos ütötte, a számítógép is, a játékos viszont már nem tudja, szóval értéktelen lapot dob rá
+  // Elvileg ezzel az utoló előtti játék bug is megvan oldva. // MEGOLDVA //
+  if (
+    gameField.childElementCount === 4 &&
+    gameField.firstChild.className === "computer-card"
+  ) {
+    // Belső feltétel
+    if (
+      playerCurrentKey !== firstCardValue ||
+      playerCurrentKey !== "12" ||
+      !playerCards.includes(firstCardValue)
+    ) {
+      handleComputerWins();
+      return;
+    }
+  }
+
   // Ha a számítógép nyitott, a játékos ütötte, viszont a számítógépnek nincs megfelelő lapja:
 
   if (
@@ -562,21 +669,21 @@ async function kiertekeles() {
     ) {
       alert("A computer viszi a lapokat.");
       handleComputerWins(); // Számítógép nyerése esetén lapok húzása és frissítés
-      return false;
+      return;
     } else {
       alert("A játékos viszi a lapokat.");
       handlePlayerWins(); // Játékos nyerése esetén lapok húzása és frissítés
-      return false;
+      return;
     }
   }
   if (
     playerCurrentKey === computerCurrentKey ||
-    gameField.lastChild.alt.slice(1) === "7"
+    gameField.lastChild.alt.slice(1) === "12"
   ) {
     alert("Round 2");
     if (tempAnswer != "") {
       handleComputerWins();
-      return false; // TODO: Kiértékelésnél computer!!!!!
+      return; // TODO: Kiértékelésnél computer!!!!!
     }
     if (gameField.firstChild.className === "computer-card") {
       await nextComputerRound();
@@ -590,18 +697,16 @@ async function kiertekeles() {
     ) {
       alert("A computer viszi a lapokat.");
       handleComputerWins(); // Számítógép nyerése esetén lapok húzása és frissítés
-      return false;
+      return;
     } else {
       alert("A játékos viszi a lapokat.");
       handlePlayerWins(); // Játékos nyerése esetén lapok húzása és frissítés
-      return false;
+      return;
     }
   }
 
   await roundEvaluation(); // Következő kör kiértékelése
 }
-
-
 async function startGame() {
   shuffleDeck(deck); // Pakli keverése
   dealCardsForPlayerAndComputer(); // Lapok kiosztása. Ezen belül van meghívva a updateGameTable().
