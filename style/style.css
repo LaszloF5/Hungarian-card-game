@@ -38,6 +38,7 @@ img {
 .player-h2 {
     display: flex;
     justify-content: center;
+    color: whitesmoke;
 }
 
 .inside-table {
@@ -55,6 +56,6 @@ img {
     border-radius: 12px;
 }
 
-/* .computer-display {
+.computer-display {
     display: none;
-} */
+}

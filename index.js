@@ -27,9 +27,9 @@ let tempCardholder = [];
 let tempAnswer = "";
 
 const deck = [
-  // [{ 2: '<img src=".//card-images//cards-medium//leaf-unter.png" alt="L2">' }],
-  // [{ 3: '<img src=".//card-images//cards-medium//leaf-ober.png" alt="L3">' }],
-  // [{ 4: '<img src=".//card-images//cards-medium//leaf-king.png" alt="L4">' }],
+  [{ 2: '<img src=".//card-images//cards-medium//leaf-unter.png" alt="L2">' }],
+  [{ 3: '<img src=".//card-images//cards-medium//leaf-ober.png" alt="L3">' }],
+  [{ 4: '<img src=".//card-images//cards-medium//leaf-king.png" alt="L4">' }],
   [
     {
       12: '<img src=".//card-images//cards-medium//leaf-seven.png" alt="L12">',
@@ -40,24 +40,24 @@ const deck = [
   [{ 10: '<img src=".//card-images//cards-medium//leaf-ten.png" alt="L10">' }],
   [{ 11: '<img src=".//card-images//cards-medium//leaf-ace.png" alt="L11">' }],
 
-  // [
-  //   {
-  //     2: '<img src=".//card-images//cards-medium//heart-unter.png" alt="H2">',
-  //   },
-  // ],
-  // [{ 3: '<img src=".//card-images//cards-medium//heart-ober.png" alt="H3">' }],
-  // [{ 4: '<img src=".//card-images//cards-medium//heart-king.png" alt="H4">' }],
+  [
+    {
+      2: '<img src=".//card-images//cards-medium//heart-unter.png" alt="H2">',
+    },
+  ],
+  [{ 3: '<img src=".//card-images//cards-medium//heart-ober.png" alt="H3">' }],
+  [{ 4: '<img src=".//card-images//cards-medium//heart-king.png" alt="H4">' }],
   [
     {
       12: '<img src=".//card-images//cards-medium//heart-seven.png" alt="H12">',
     },
   ],
-  // [
-  //   {
-  //     8: '<img src=".//card-images//cards-medium//heart-eight.png" alt="H8">',
-  //   },
-  // ],
-  // [{ 9: '<img src=".//card-images//cards-medium//heart-nine.png" alt="H9">' }],
+  [
+    {
+      8: '<img src=".//card-images//cards-medium//heart-eight.png" alt="H8">',
+    },
+  ],
+  [{ 9: '<img src=".//card-images//cards-medium//heart-nine.png" alt="H9">' }],
   [
     {
       10: '<img src=".//card-images//cards-medium//heart-ten.png" alt="H10">',
@@ -69,24 +69,24 @@ const deck = [
     },
   ],
 
-  // [
-  //   {
-  //     2: '<img src=".//card-images//cards-medium//acorn-unter.png" alt="A2">',
-  //   },
-  // ],
-  // [{ 3: '<img src=".//card-images//cards-medium//acorn-ober.png" alt="A3">' }],
-  // [{ 4: '<img src=".//card-images//cards-medium//acorn-king.png" alt="A4">' }],
+  [
+    {
+      2: '<img src=".//card-images//cards-medium//acorn-unter.png" alt="A2">',
+    },
+  ],
+  [{ 3: '<img src=".//card-images//cards-medium//acorn-ober.png" alt="A3">' }],
+  [{ 4: '<img src=".//card-images//cards-medium//acorn-king.png" alt="A4">' }],
   [
     {
       12: '<img src=".//card-images//cards-medium//acorn-seven.png" alt="A12">',
     },
   ],
-  // [
-  //   {
-  //     8: '<img src=".//card-images//cards-medium//acorn-eight.png" alt="A8">',
-  //   },
-  // ],
-  // [{ 9: '<img src=".//card-images//cards-medium//acorn-nine.png" alt="A9">' }],
+  [
+    {
+      8: '<img src=".//card-images//cards-medium//acorn-eight.png" alt="A8">',
+    },
+  ],
+  [{ 9: '<img src=".//card-images//cards-medium//acorn-nine.png" alt="A9">' }],
   [
     {
       10: '<img src=".//card-images//cards-medium//acorn-ten.png" alt="A10">',
@@ -98,9 +98,9 @@ const deck = [
     },
   ],
 
-  // [{ 2: '<img src=".//card-images//cards-medium//bell-unter.png" alt="B2">' }],
-  // [{ 3: '<img src=".//card-images//cards-medium//bell-ober.png" alt="B3">' }],
-  // [{ 4: '<img src=".//card-images//cards-medium//bell-king.png" alt="B4">' }],
+  [{ 2: '<img src=".//card-images//cards-medium//bell-unter.png" alt="B2">' }],
+  [{ 3: '<img src=".//card-images//cards-medium//bell-ober.png" alt="B3">' }],
+  [{ 4: '<img src=".//card-images//cards-medium//bell-king.png" alt="B4">' }],
   [
     {
       12: '<img src=".//card-images//cards-medium//bell-seven.png" alt="B12">',
@@ -120,16 +120,21 @@ function renderDatas() {
   dataField.innerHTML = `
        <li>Player pontszerző lapok száma: ${playerPoints}</li>
        <li>Player megszerzett lapok száma: ${playerOwnedCards}</li>
-       <li>Player lapjainak az értéke: ${playerKeys} </li>
        <li>Computer pontszerző lapok száma: ${computerPoints}</li>
        <li>Computer megszerzett lapok száma: ${computerOwnedCards}</li>
-       <li>Computer lapjainak az értéke: ${computerKeys} </li>
        <li>Pakliban lévő lapok száma: ${deck.length}</li>
-       <li>Asztalon lévő lapok értéke: ${tempCardholder}</li>
+        <li>Player lapjainak az értéke: ${playerKeys} </li>
+  <li>Computer lapjainak az értéke: ${computerKeys} </li>
+<li>Asztalon lévő lapok értéke: ${tempCardholder}</li>
        `;
   isDisabledPassBtn();
 }
 
+/*
+  A renderDaras-ból ezek kerülnek kivételre:
+  <li>Player lapjainak az értéke: ${playerKeys} </li>
+  <li>Computer lapjainak az értéke: ${computerKeys} </li>
+*/
 function renderAfterRound() {
   gameField.innerHTML = "";
   dealCardsForPlayerAndComputer();
@@ -157,11 +162,6 @@ function isDisabledPassBtn() {
   } else {
     playerPassButton.disabled = false;
   }
-}
-
-function passFunction() {
-  // A függvénynek a célja: Ha lefut, akkor a computer viszi a kört.
-  return handleComputerWins();
 }
 
 // Pakli keverő függvény
@@ -267,9 +267,10 @@ function playerManageCards() {
         playerCurrentKey = Number(selectedAlt.slice(1)).toString();
         tempCardholder.push(playerCurrentKey);
         playerKeys.splice(index, 1);
-      } else {
-        alert("Hiba!");
       }
+      // else {
+      //   alert("Hiba!");
+      // }
       renderDatas();
       playerGameTable.removeEventListener("click", handleClick);
     }
@@ -278,7 +279,12 @@ function playerManageCards() {
   });
 }
 
-function computerManageCards() {
+function computerManageCards() { 
+  if (gameField.childElementCount === 2) {
+    if (gameField.firstChild.className === "computer-card" && gameField.childElementCount === 2 && !computerKeys.includes(gameField.firstChild.alt.slice(1))) {
+      return false; // Ez a feltétel segít a pass - button helyes működésében !! 
+  }
+}
   let isContains = computerKeys.indexOf(playerCurrentKey.toString());
   // Új eset: Ha a computer kezdett, és ütőlapot tett le a játékos, viszont a computernek már nincs olyan lapja amivel lehozhatná a kört.
   if (gameField.childElementCount > 0) {
@@ -504,7 +510,7 @@ async function playerTurn() {
         playerKeys.includes("12")
       ) {
         await playerManageCards(); // biggest debug ever...
-        return; // Az 502. és 503. soron kívül ezek hozzá lettek írva, ezeket holnap tesztelni!!!
+        return;
       } else {
         await playerManageCards();
         tempAnswer = "none";
@@ -544,8 +550,6 @@ async function playerTurn() {
   return tempAnswer;
 }
 
-// Módosítás következik: settimeout helyett await.
-
 async function computerTurn() {
   setTimeout(() => {
     computerManageCards();
@@ -568,6 +572,16 @@ async function nextComputerRound() {
 
 /****  Kiértékelés függvények ****/
 
+function endGame() {
+  if (playerPoints > computerPoints) {
+    alert("Nyertél!");
+  } else if (computerPoints > playerPoints) {
+    alert("A számítógép nyert!");
+  } else {
+    alert("Döntetlen!");
+  }
+}
+
 async function roundEvaluation() {
   // aki utoljára helyezte le a kártyalapot, megmutatja, hogy melyik játékos kezdte a kört : gameField.lastChild.alt[1];
   setTimeout(() => {
@@ -586,6 +600,16 @@ async function handlePlayerWins() {
   await playerTurn();
   await computerTurn();
   await roundEvaluation();
+  if (
+    deck.length === 0 &&
+    playerKeys.length === 0 &&
+    computerKeys.length === 0
+  ) {
+    setTimeout(() => {
+      endGame();
+    }, 2000);
+    return; // További végrehajtás megállítása!!
+  }
 }
 
 async function handleComputerWins() {
@@ -599,6 +623,23 @@ async function handleComputerWins() {
   await computerTurn();
   await playerTurn();
   await roundEvaluation();
+  if (
+    deck.length === 0 &&
+    playerKeys.length === 0 &&
+    computerKeys.length === 0
+  ) {
+    setTimeout(() => {
+      endGame();
+    }, 2000);
+    return; // További végrehajtás megállítása!!
+  }
+}
+
+async function passFunction() {
+  // A függvénynek a célja: Ha lefut, akkor a computer viszi a kört.
+  // Ezt meg kell írni....
+  tempAnswer = "none";
+  kiertekeles();
 }
 
 /*********************************/
@@ -636,19 +677,47 @@ async function kiertekeles() {
   //   return;
   // }
 
-  // A következő feltétel ellentéte
-  // Ezt és a következő feltételt lehet annyiban módosítani kell, hogy >= 4 legyen !!!!!!!!!!!!!!!!!!
+  if (
+    gameField.childElementCount >= 4 &&
+    gameField.firstChild.className !== "computer-card"
+  ) {
+    if (
+      (playerCurrentKey === "12" || playerCurrentKey === firstCardValue) &&
+      (computerCurrentKey === firstCardValue || computerCurrentKey === "12") &&
+      (playerKeys.includes(firstCardValue) || playerKeys.includes("12"))
+    ) {
+      await nextPlayerRound();
+      return roundEvaluation();
+    }
+    if (
+      (playerCurrentKey === "12" || playerCurrentKey === firstCardValue) &&
+      (computerCurrentKey === firstCardValue || computerCurrentKey === "12") &&
+      (!playerKeys.includes(firstCardValue) || !playerKeys.includes("12"))
+    ) {
+      handleComputerWins();
+    }
+    if (
+      (playerCurrentKey === "12" || playerCurrentKey === firstCardValue) &&
+      (computerCurrentKey !== firstCardValue || computerCurrentKey !== "12")
+    ) {
+      handlePlayerWins();
+    } else {
+      await nextPlayerRound();
+      return roundEvaluation();
+    }
+  }
+
   if (
     gameField.childElementCount >= 4 &&
     gameField.firstChild.className !== "computer-card"
   ) {
     // Ez akkor lép életbe, ha min 4 lap van lent, a játékos kezdett, és még tudja ütni.
     if (
-      (playerCurrentKey === "12" || playerCurrentKey === firstCardValue) &&
-      playerKeys.includes(firstCardValue) || playerKeys.includes("12") && 
-      (computerCurrentKey === firstCardValue ||
-        computerCurrentKey === "12"))
-     {
+      ((playerCurrentKey === "12" || playerCurrentKey === firstCardValue) &&
+        playerKeys.includes(firstCardValue)) ||
+      (playerKeys.includes("12") &&
+        (computerCurrentKey === firstCardValue || computerCurrentKey === "12"))
+    ) {
       await nextPlayerRound();
       return roundEvaluation();
     }
@@ -681,6 +750,14 @@ async function kiertekeles() {
   ) {
     // Belső feltétel
     if (
+      (playerCurrentKey === firstCardValue || playerCurrentKey === "12") &&
+      (computerCurrentKey === firstCardValue || computerCurrentKey === "12") &&
+      computerKeys.includes("12")
+    ) {
+      await nextComputerRound();
+      return roundEvaluation();
+    }
+    if (
       playerCurrentKey !== firstCardValue ||
       playerCurrentKey !== "12" ||
       !playerCards.includes(firstCardValue)
@@ -701,7 +778,11 @@ async function kiertekeles() {
     return;
   }
 
-  if (playerCards.length === 0 && computerCards.length === 0) {
+  if (
+    playerCards.length === 0 &&
+    computerCards.length === 0 &&
+    gameField.childElementCount > 0
+  ) {
     if (
       (gameField.firstChild.className === "computer-card" &&
         tempAnswer === "none") ||
@@ -748,6 +829,7 @@ async function kiertekeles() {
 
   await roundEvaluation(); // Következő kör kiértékelése
 }
+
 async function startGame() {
   shuffleDeck(deck); // Pakli keverése
   dealCardsForPlayerAndComputer(); // Lapok kiosztása. Ezen belül van meghívva a updateGameTable().
