@@ -27,9 +27,9 @@ let tempCardholder = [];
 let tempAnswer = "";
 
 const deck = [
-  [{ 2: '<img src=".//card-images//cards-medium//leaf-unter.png" alt="L2">' }],
-  [{ 3: '<img src=".//card-images//cards-medium//leaf-ober.png" alt="L3">' }],
-  [{ 4: '<img src=".//card-images//cards-medium//leaf-king.png" alt="L4">' }],
+  // [{ 2: '<img src=".//card-images//cards-medium//leaf-unter.png" alt="L2">' }],
+  // [{ 3: '<img src=".//card-images//cards-medium//leaf-ober.png" alt="L3">' }],
+  // [{ 4: '<img src=".//card-images//cards-medium//leaf-king.png" alt="L4">' }],
   [
     {
       12: '<img src=".//card-images//cards-medium//leaf-seven.png" alt="L12">',
@@ -40,24 +40,24 @@ const deck = [
   [{ 10: '<img src=".//card-images//cards-medium//leaf-ten.png" alt="L10">' }],
   [{ 11: '<img src=".//card-images//cards-medium//leaf-ace.png" alt="L11">' }],
 
-  [
-    {
-      2: '<img src=".//card-images//cards-medium//heart-unter.png" alt="H2">',
-    },
-  ],
-  [{ 3: '<img src=".//card-images//cards-medium//heart-ober.png" alt="H3">' }],
-  [{ 4: '<img src=".//card-images//cards-medium//heart-king.png" alt="H4">' }],
+  // [
+  //   {
+  //     2: '<img src=".//card-images//cards-medium//heart-unter.png" alt="H2">',
+  //   },
+  // ],
+  // [{ 3: '<img src=".//card-images//cards-medium//heart-ober.png" alt="H3">' }],
+  // [{ 4: '<img src=".//card-images//cards-medium//heart-king.png" alt="H4">' }],
   [
     {
       12: '<img src=".//card-images//cards-medium//heart-seven.png" alt="H12">',
     },
   ],
-  [
-    {
-      8: '<img src=".//card-images//cards-medium//heart-eight.png" alt="H8">',
-    },
-  ],
-  [{ 9: '<img src=".//card-images//cards-medium//heart-nine.png" alt="H9">' }],
+  // [
+  //   {
+  //     8: '<img src=".//card-images//cards-medium//heart-eight.png" alt="H8">',
+  //   },
+  // ],
+  // [{ 9: '<img src=".//card-images//cards-medium//heart-nine.png" alt="H9">' }],
   [
     {
       10: '<img src=".//card-images//cards-medium//heart-ten.png" alt="H10">',
@@ -69,24 +69,24 @@ const deck = [
     },
   ],
 
-  [
-    {
-      2: '<img src=".//card-images//cards-medium//acorn-unter.png" alt="A2">',
-    },
-  ],
-  [{ 3: '<img src=".//card-images//cards-medium//acorn-ober.png" alt="A3">' }],
-  [{ 4: '<img src=".//card-images//cards-medium//acorn-king.png" alt="A4">' }],
+  // [
+  //   {
+  //     2: '<img src=".//card-images//cards-medium//acorn-unter.png" alt="A2">',
+  //   },
+  // ],
+  // [{ 3: '<img src=".//card-images//cards-medium//acorn-ober.png" alt="A3">' }],
+  // [{ 4: '<img src=".//card-images//cards-medium//acorn-king.png" alt="A4">' }],
   [
     {
       12: '<img src=".//card-images//cards-medium//acorn-seven.png" alt="A12">',
     },
   ],
-  [
-    {
-      8: '<img src=".//card-images//cards-medium//acorn-eight.png" alt="A8">',
-    },
-  ],
-  [{ 9: '<img src=".//card-images//cards-medium//acorn-nine.png" alt="A9">' }],
+  // [
+  //   {
+  //     8: '<img src=".//card-images//cards-medium//acorn-eight.png" alt="A8">',
+  //   },
+  // ],
+  // [{ 9: '<img src=".//card-images//cards-medium//acorn-nine.png" alt="A9">' }],
   [
     {
       10: '<img src=".//card-images//cards-medium//acorn-ten.png" alt="A10">',
@@ -98,9 +98,9 @@ const deck = [
     },
   ],
 
-  [{ 2: '<img src=".//card-images//cards-medium//bell-unter.png" alt="B2">' }],
-  [{ 3: '<img src=".//card-images//cards-medium//bell-ober.png" alt="B3">' }],
-  [{ 4: '<img src=".//card-images//cards-medium//bell-king.png" alt="B4">' }],
+  // [{ 2: '<img src=".//card-images//cards-medium//bell-unter.png" alt="B2">' }],
+  // [{ 3: '<img src=".//card-images//cards-medium//bell-ober.png" alt="B3">' }],
+  // [{ 4: '<img src=".//card-images//cards-medium//bell-king.png" alt="B4">' }],
   [
     {
       12: '<img src=".//card-images//cards-medium//bell-seven.png" alt="B12">',
@@ -498,9 +498,31 @@ async function playerTurn() {
   //     }
   // }
   if (deck.length === 0) {
-    await playerManageCards(); // biggest debug ever...
-    return;
+    if (gameField.childElementCount > 0) {
+      if (
+        playerKeys.includes(gameField.firstChild.alt.slice(1)) ||
+        playerKeys.includes("12")
+      ) {
+        await playerManageCards(); // biggest debug ever...
+        return; // Az 502. és 503. soron kívül ezek hozzá lettek írva, ezeket holnap tesztelni!!!
+      } else {
+        await playerManageCards();
+        tempAnswer = "none";
+        return;
+      }
+    }
+    // Ha a pakli üres, a játékos rakott, és van ütőlapja:
+    if (playerKeys.includes(playerCurrentKey) || playerKeys.includes("12")) {
+      await playerManageCards();
+      return;
+    } else {
+      // És ha nincs
+      await playerManageCards();
+      tempAnswer = "none";
+      return;
+    }
   }
+
   if (playerKeys.length < 4) {
     if (
       playerKeys.includes(gameField.firstChild.alt.slice(1)) ||
@@ -590,7 +612,10 @@ async function kiertekeles() {
 
   // Ha értéktelen lapra rak a player 12-es értékű lapot
 
-  if (gameField.firstChild.className === "computer-card" && playerCurrentKey === "12") {
+  if (
+    gameField.firstChild.className === "computer-card" &&
+    playerCurrentKey === "12"
+  ) {
     handlePlayerWins();
     return;
   }
@@ -612,30 +637,46 @@ async function kiertekeles() {
   // }
 
   // A következő feltétel ellentéte
-        // Ezt és a következő feltételt lehet annyiban módosítani kell, hogy >== 4 legyen !!!!!!!!!!!!!!!!!!
+  // Ezt és a következő feltételt lehet annyiban módosítani kell, hogy >= 4 legyen !!!!!!!!!!!!!!!!!!
   if (
-    gameField.childElementCount === 4 &&
+    gameField.childElementCount >= 4 &&
     gameField.firstChild.className !== "computer-card"
   ) {
+    // Ez akkor lép életbe, ha min 4 lap van lent, a játékos kezdett, és még tudja ütni.
+    if (
+      (playerCurrentKey === "12" || playerCurrentKey === firstCardValue) &&
+      playerKeys.includes(firstCardValue) || playerKeys.includes("12") && 
+      (computerCurrentKey === firstCardValue ||
+        computerCurrentKey === "12"))
+     {
+      await nextPlayerRound();
+      return roundEvaluation();
+    }
+    // Eddig tart a feltétel.
+
     if (
       (playerCurrentKey === "12" || playerCurrentKey === firstCardValue) &&
       (computerCurrentKey === firstCardValue || computerCurrentKey === "12") &&
-      (!playerKeys.includes(firstCardValue) || !playerKeys.includes("12"))
+      (!playerKeys.includes("12") || !playerKeys.includes(firstCardValue))
     ) {
       handleComputerWins();
       return;
-    } else if (!computerCurrentKey === firstCardValue || !computerCurrentKey === "12"){
+    } else if (
+      computerCurrentKey !== firstCardValue ||
+      computerCurrentKey !== "12"
+    ) {
       handlePlayerWins();
       return;
     } else {
       await nextPlayerRound();
+      return roundEvaluation();
     }
   }
 
   // Ha a számítógép nyitott, a játékos ütötte, a számítógép is, a játékos viszont már nem tudja, szóval értéktelen lapot dob rá
   // Elvileg ezzel az utoló előtti játék bug is megvan oldva. // MEGOLDVA //
   if (
-    gameField.childElementCount === 4 &&
+    gameField.childElementCount >= 4 &&
     gameField.firstChild.className === "computer-card"
   ) {
     // Belső feltétel

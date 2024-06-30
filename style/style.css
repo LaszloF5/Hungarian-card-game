@@ -24,13 +24,20 @@ img {
     margin: 0 auto;
     width: 75%;
     height: 350px;
-    border: 1px solid black;
+    /* border: 1px solid black;
+    background-color: #A0522D; */
 }
 
 .players-area {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     border: 1px solid black;
+    background-color: #35654D;
+}
+
+.player-h2 {
+    display: flex;
+    justify-content: center;
 }
 
 .inside-table {
@@ -38,10 +45,16 @@ img {
     padding: 1rem;
     border: 2px solid black;
     border-radius: .5rem;
-    background-color: black;
+    /* background-color: black; */
+    width: 800px;
+    height: 340px;
 }
 
 .computer-card {
     border: 2px solid red;
     border-radius: 12px;
 }
+
+/* .computer-display {
+    display: none;
+} */
