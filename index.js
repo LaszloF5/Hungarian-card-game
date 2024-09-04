@@ -305,6 +305,14 @@ function playerManageCards() {
 
 function computerManageCards() {
   if (
+    gameField.childElementCount !== 0 &&
+    gameField.firstChild.className === "computer-card" &&
+    computerCurrentKey !== playerCurrentKey &&
+    playerCurrentKey !== "12"
+  ) {
+    return;
+  }
+  if (
     gameField.childElementCount === 6 &&
     gameField.lastChild.className === "computer-card"
   ) {
@@ -403,6 +411,7 @@ async function playerTurn() {
       !playerKeys.includes("12")
     ) {
       await playerManageCards();
+      setTimeout(await roundEvaluation(), 2000);
       return;
     }
     // 2024.08.30. új feltétel, a word-ben felírt bug javítására.
@@ -412,6 +421,7 @@ async function playerTurn() {
         playerKeys.includes("12"))
     ) {
       await playerManageCards();
+      await roundEvaluation();
     }
   }
   if (deck.length === 0) {
@@ -449,6 +459,7 @@ async function playerTurn() {
     } else {
       if (gameField.firstChild.className === "computer-card") {
         await playerManageCards(); // Végül kiderült, hogy ide kellett plusz 1 feltétel. A lenti esettel ellentétben, itt kötelező lapot raknia a játékosnak.
+        await roundEvaluation();
       } else {
         tempAnswer = "none"; // Csak akkor passzolja a kört, ha a játékos kezdte, és a computer ütötte, de nincs már ütőlapja a játékosnak.
       }
@@ -478,9 +489,24 @@ async function nextPlayerRound() {
 
 // ha a computer vitte a lapokat, vagyis ő kezdi a következő kört.
 async function nextComputerRound() {
-  await computerTurn();
-  await playerTurn();
-  await roundEvaluation();
+  try {
+    await computerTurn();
+  } catch (error) {
+    console.error("Error during computerTurn:", error);
+  }
+
+  try {
+    await playerTurn();
+  } catch (error) {
+    console.error("Error during playerTurn:", error);
+  }
+
+  try {
+    await roundEvaluation();
+  } catch (error) {
+    console.error("Error during roundEvaluation:", error);
+  }
+
   return;
 }
 
@@ -511,10 +537,25 @@ async function handlePlayerWins() {
     }
   }
   renderAfterRound();
-  await playerTurn();
-  await computerTurn();
-  await roundEvaluation();
-  return; // További végrehajtás megállítása!!
+  if (
+    deck.length === 0 &&
+    playerCards.length === 0 &&
+    computerCards.length === 0
+  ) {
+    setTimeout(() => {
+      endGame();
+    }, 2000);
+    setTimeout(() => {
+      playerGameTable.classList.remove("sign");
+      startButton.style.visibility = "visible";
+      location.reload();
+    }, 2500);
+  } else {
+    await playerTurn();
+    await computerTurn();
+    await roundEvaluation();
+    return; // További végrehajtás megállítása!!
+  }
 }
 
 async function handleComputerWins() {
@@ -525,22 +566,6 @@ async function handleComputerWins() {
     }
   }
   renderAfterRound();
-  await computerTurn();
-  await playerTurn();
-  await roundEvaluation();
-  return; // További végrehajtás megállítása!!
-}
-
-async function passFunction() {
-  await handleComputerWins();
-}
-
-/*********************************/
-
-async function kiertekeles() {
-  if (gameField.childElementCount === 0) {
-    return;
-  }
   if (
     deck.length === 0 &&
     playerCards.length === 0 &&
@@ -550,13 +575,53 @@ async function kiertekeles() {
       endGame();
     }, 2000);
     setTimeout(() => {
-      playerGameTable.classList.remove(".sign");
+      playerGameTable.classList.remove("sign");
       startButton.style.visibility = "visible";
       location.reload();
     }, 2500);
+  } else {
+    await computerTurn();
+    await playerTurn();
+    await roundEvaluation();
+    return; // További végrehajtás megállítása!!
   }
+}
 
-  let firstCardValue = gameField.firstChild.alt.slice(1); // Az első lerakott lap értéke
+async function passFunction() {
+  await handleComputerWins();
+}
+
+/*********************************/
+
+async function kiertekeles() {
+
+  if (gameField.childElementCount === 0) {
+    return;
+  }
+  let firstCardValue = gameField?.firstChild?.alt?.slice(1); // Az első lerakott lap értéke
+  let lastCardValue = gameField?.lastChild?.alt?.slice(1);
+  if (
+    deck.length === 0 &&
+    playerCards.length === 0 &&
+    computerCards.length === 0
+  ) {
+    if (
+      gameField.firstChild.className === "computer-card" &&
+      (firstCardValue === lastCardValue || lastCardValue === "12") &&
+      (playerCurrentKey === firstCardValue || playerCurrentKey === "12")
+    ) {
+      await handlePlayerWins();
+      return;
+    }
+    if (
+      gameField.firstChild.className !== "computerCard" &&
+      (firstCardValue === lastCardValue || lastCardValue === "12") &&
+      (computerCurrentKey === firstCardValue || computerCurrentKey === "12")
+    ) {
+      await handleComputerWins();
+      return;
+    }
+  }
 
   // Azok az esetek amikor a játékosoknál kevesebb mint 4 kártyalap van, és a játékos kezd
 
