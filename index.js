@@ -3,23 +3,22 @@ let computerGameTable = document.querySelector(".js-computer-table");
 let dataField = document.querySelector(".js-datas");
 let gameField = document.querySelector(".js-gamefield");
 
-let playerCards = []; // játékos lapjai
-let playerKeys = []; // computer lapjai
-let playerEarnedCards = []; // játékos megszerzett lapok
+let playerCards = [];
+let playerKeys = [];
+let playerEarnedCards = [];
 let playerCurrentKey = "";
 let playerImgAlt = "";
 let playerPoints = 0;
 let playerOwnedCards = 0;
 
-let computerCards = []; // játékos lap értékei
-let computerKeys = []; // computer lap értékei
-let computerEarnedCards = []; // computer megszerzett lapok
+let computerCards = [];
+let computerKeys = [];
+let computerEarnedCards = [];
 let computerCurrentKey = "";
 let computerImgAlt = "";
 let computerPoints = 0;
 let computerOwnedCards = 0;
 
-// Buttons
 let startButton = document.querySelector(".js-start-button");
 let playerPassButton = document.querySelector(".js-player-pass-button");
 
@@ -123,17 +122,16 @@ function deepCopyDeck(deck) {
 
 let copiedDeck = deepCopyDeck(deck);
 
-// Adatok megjelenítése
 function renderDatas() {
   dataField.innerHTML = `
-       <li>Player pontszerző lapok száma: ${playerPoints}</li>
-       <li>Player megszerzett lapok száma: ${playerOwnedCards}</li>
-       <li>Computer pontszerző lapok száma: ${computerPoints}</li>
-       <li>Computer megszerzett lapok száma: ${computerOwnedCards}</li>
-       <li>Pakliban lévő lapok száma: ${deck.length}</li>
-        <li>Player lapjainak az értéke: ${playerKeys} </li>
-  <li>Computer lapjainak az értéke: ${computerKeys} </li>
-<li>Asztalon lévő lapok értéke: ${tempCardholder}</li>
+       <li>Number of player scorecards: ${playerPoints}</li>
+       <li>Number of player earned cards: ${playerOwnedCards}</li>
+       <li>Number of computer scorecards: ${computerPoints}</li>
+       <li>Number of computer earned cards: ${computerOwnedCards}</li>
+       <li>Number of cards in deck: ${deck.length}</li>
+        <li>Value of player's cards: ${playerKeys} </li>
+  <li>Value of computer's cards: ${computerKeys} </li>
+<li>Value of the cards on the table: ${tempCardholder}</li>
        ;`;
   isDisabledPassBtn();
 }
@@ -152,11 +150,6 @@ function toTheBaseState() {
   renderDatas();
 }
 
-/*
-  A renderDaras-ból ezek kerülnek kivételre:
-  <li>Player lapjainak az értéke: ${playerKeys} </li>
-  <li>Computer lapjainak az értéke: ${computerKeys} </li>
-*/
 function renderAfterRound() {
   gameField.innerHTML = "";
   dealCardsForPlayerAndComputer();
@@ -167,7 +160,7 @@ function renderAfterRound() {
   renderDatas();
 }
 
-// Start button kezelése (disabled)
+// Start button management (disabled)
 function isDisabled() {
   if (deck.length === 32) {
     startButton.style.visibility = "visible";
@@ -176,7 +169,7 @@ function isDisabled() {
   }
 }
 
-//Player pass btn kezelése
+//Player pass button management
 
 function isDisabledPassBtn() {
   if (playerCards.length === 4) {
@@ -186,7 +179,7 @@ function isDisabledPassBtn() {
   }
 }
 
-// Pakli keverő függvény
+// Deck shuffling function
 function shuffleDeck(deck) {
   for (let i = deck.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -194,7 +187,7 @@ function shuffleDeck(deck) {
   }
 }
 
-//Pakliból kártyalapok kivétele
+// Removing card(s) from the deck
 function dealCard(deck) {
   if (deck.length > 0) {
     return deck.shift()[0];
@@ -203,7 +196,7 @@ function dealCard(deck) {
   }
 }
 
-// Játékasztal frissítése függvény (player, computer)
+// Game table update function (player, computer)
 function updateGameTable(cards, gameTable) {
   gameTable.innerHTML = "";
   cards.forEach((card) => {
@@ -213,7 +206,7 @@ function updateGameTable(cards, gameTable) {
   });
 }
 
-// Játékosok lapjainak kiosztása
+// Distribution of cards to players
 function dealCardsForPlayerAndComputer() {
   while (
     deck.length > 0 &&
@@ -236,14 +229,13 @@ function dealCardsForPlayerAndComputer() {
   updateGameTable(computerCards, computerGameTable);
 }
 
-// A kártyák kulcsainak kinyerése
+// Extracting the keys of the cards
 function getCardKeys(cards) {
-  return cards.map((card) => Object.keys(card)); //Object.keys -> Visszaadja minden objektum kulcsát
+  return cards.map((card) => Object.keys(card));
 }
 
-// A játékos kártyát választ, és tesz az asztalra.
+// Player chooses a card and places it on the table
 
-// TODO: A függvényben kell egy olyan módosítás, hogy ha kevesebb lapja van a játékosnak mint 4, akkor csak olyan lapot lehessen lerakni ami a kezdő lap, vagy 7-est.
 function playerManageCards() {
   return new Promise((resolve) => {
     function handleClick(event) {
@@ -251,9 +243,8 @@ function playerManageCards() {
         let selectedAlt = event.target.alt;
         let selectedKey = Number(selectedAlt.slice(1));
 
-        // Ellenőrzi, hogy van-e kártya a gameField-ben
         if (gameField.childElementCount === 0) {
-          // Ha nincs kártya, bármilyen kártyát le lehet rakni
+
           gameField.appendChild(event.target);
           processPlayerCard(selectedAlt);
           resolve();
@@ -261,7 +252,6 @@ function playerManageCards() {
           let firstCardAlt = gameField.firstChild.alt;
           let firstCardKey = Number(firstCardAlt.slice(1));
 
-          // Ellenőrzi, hogy csak akkor engedélyezi a kártya lerakását, ha a kulcsok megegyeznek, vagy ha a kártya értéke 12
           if (selectedKey === firstCardKey || selectedKey === 12) {
             gameField.appendChild(event.target);
             processPlayerCard(selectedAlt);
@@ -299,7 +289,7 @@ function playerManageCards() {
     playerGameTable.addEventListener("click", handleClick);
     setTimeout(() => {
       playerGameTable.classList.add("sign");
-    }, 1000); // Ez lehet túl nagy gap.
+    }, 1000);
   });
 }
 
@@ -318,7 +308,7 @@ function computerManageCards() {
   ) {
     return;
   }
-  // Ellenőrizzük, hogy a computer nem rak le újabb lapot, ha már két lap van lent és a computeré az utolsó
+
   if (
     gameField.childElementCount === 2 &&
     gameField.lastChild.className === "computer-card"
@@ -326,7 +316,6 @@ function computerManageCards() {
     return;
   }
 
-  // Ha a játékos ütött, de a computernek nincs olyan lapja, amivel vissza tudná hozni a kört, futtassuk az értékelést
   if (
     gameField.childElementCount > 0 &&
     gameField.firstChild.className === "computer-card" &&
@@ -338,7 +327,6 @@ function computerManageCards() {
     return roundEvaluation();
   }
 
-  // Ha a gameField üres, a computer random lapot választ
   if (gameField.childElementCount === 0) {
     let lowValueCards = computerKeys.filter((key) =>
       ["2", "3", "4", "8", "9"].includes(key)
@@ -352,7 +340,6 @@ function computerManageCards() {
     return;
   }
 
-  // Ha van még lap, és a computer képes játszani, akkor válasszunk megfelelő kártyát
   let validCard = findValidCard();
   if (validCard) {
     playComputerCard(validCard);
@@ -373,7 +360,7 @@ function playComputerCard(cardKey) {
     let tempDiv = document.createElement("div");
     tempDiv.innerHTML = cardHtml;
     let cardElement = tempDiv.firstChild;
-    cardElement.classList.add("computer-card"); // Piros keret hozzáadása
+    cardElement.classList.add("computer-card");
     gameField.appendChild(cardElement);
     computerCards.splice(computerIndex, 1);
   }
@@ -383,7 +370,6 @@ function playComputerCard(cardKey) {
 }
 
 function findValidCard() {
-  // Megpróbálunk találni egy lapot, amivel a computer játszhat
   let validCard = computerKeys.find(
     (key) => key === gameField.firstChild.alt.slice(1) || key === "12"
   );
@@ -402,8 +388,6 @@ function findValidCard() {
 }
 
 async function playerTurn() {
-  // ide is beágyazásra került az a feltétel, amikor a computer kezdi a kört, és a játékosnak nincs több ütőlapja, viszont a computer reagál rá, és a játékosnak is kell.
-  // playerGameTable.classList.add("sign");
   if (gameField.childElementCount !== 0) {
     if (
       gameField.firstChild.className === "computer-card" &&
@@ -414,7 +398,7 @@ async function playerTurn() {
       setTimeout(await roundEvaluation(), 2000);
       return;
     }
-    // 2024.08.30. új feltétel, a word-ben felírt bug javítására.
+
     if (
       gameField.firstChild.className === "computer-card" &&
       (playerKeys.includes(gameField.firstChild.alt.slice(1)) ||
@@ -430,7 +414,7 @@ async function playerTurn() {
         playerKeys.includes(gameField.firstChild.alt.slice(1)) ||
         playerKeys.includes("12")
       ) {
-        await playerManageCards(); // biggest debug ever...
+        await playerManageCards();
         return;
       } else {
         await playerManageCards();
@@ -438,12 +422,11 @@ async function playerTurn() {
         return;
       }
     }
-    // Ha a pakli üres, a játékos rakott, és van ütőlapja:
+
     if (playerKeys.includes(playerCurrentKey) || playerKeys.includes("12")) {
       await playerManageCards();
       return;
     } else {
-      // És ha nincs
       await playerManageCards();
       tempAnswer = "none";
       return;
@@ -458,10 +441,10 @@ async function playerTurn() {
       await playerManageCards();
     } else {
       if (gameField.firstChild.className === "computer-card") {
-        await playerManageCards(); // Végül kiderült, hogy ide kellett plusz 1 feltétel. A lenti esettel ellentétben, itt kötelező lapot raknia a játékosnak.
+        await playerManageCards(); 
         await roundEvaluation();
       } else {
-        tempAnswer = "none"; // Csak akkor passzolja a kört, ha a játékos kezdte, és a computer ütötte, de nincs már ütőlapja a játékosnak.
+        tempAnswer = "none";
       }
     }
   } else {
@@ -477,7 +460,6 @@ async function computerTurn() {
   }, 1000);
 }
 
-// ha a játékos vitte a lapokat, vagyis ő kezdi a következő kört.
 async function nextPlayerRound() {
   await playerTurn();
   if (tempAnswer == "") {
@@ -487,7 +469,6 @@ async function nextPlayerRound() {
   return;
 }
 
-// ha a computer vitte a lapokat, vagyis ő kezdi a következő kört.
 async function nextComputerRound() {
   try {
     await computerTurn();
@@ -510,8 +491,6 @@ async function nextComputerRound() {
   return;
 }
 
-/****  Kiértékelés függvények ****/
-
 function endGame() {
   if (playerPoints > computerPoints) {
     alert("Nyertél!");
@@ -523,7 +502,6 @@ function endGame() {
 }
 
 async function roundEvaluation() {
-  // aki utoljára helyezte le a kártyalapot, megmutatja, hogy melyik játékos kezdte a kört : gameField.lastChild.alt[1];
   setTimeout(() => {
     kiertekeles();
   }, 2000);
@@ -554,7 +532,7 @@ async function handlePlayerWins() {
     await playerTurn();
     await computerTurn();
     await roundEvaluation();
-    return; // További végrehajtás megállítása!!
+    return;
   }
 }
 
@@ -583,7 +561,7 @@ async function handleComputerWins() {
     await computerTurn();
     await playerTurn();
     await roundEvaluation();
-    return; // További végrehajtás megállítása!!
+    return;
   }
 }
 
@@ -591,14 +569,11 @@ async function passFunction() {
   await handleComputerWins();
 }
 
-/*********************************/
-
 async function kiertekeles() {
-
   if (gameField.childElementCount === 0) {
     return;
   }
-  let firstCardValue = gameField?.firstChild?.alt?.slice(1); // Az első lerakott lap értéke
+  let firstCardValue = gameField?.firstChild?.alt?.slice(1);
   let lastCardValue = gameField?.lastChild?.alt?.slice(1);
   if (
     deck.length === 0 &&
@@ -623,36 +598,39 @@ async function kiertekeles() {
     }
   }
 
-  // Azok az esetek amikor a játékosoknál kevesebb mint 4 kártyalap van, és a játékos kezd
+  // Cases where players have less than 4 cards and the player starts
 
-  if (playerKeys < 3 && gameField.firstChild.className !== "computer-card") {
-    if (firstCardValue !== computerCurrentKey || computerCurrentKey !== "12") {
+  if (
+    playerKeys.length < 3 &&
+    gameField.firstChild.className !== "computer-card"
+  ) {
+    if (firstCardValue !== computerCurrentKey && computerCurrentKey !== "12") {
       handlePlayerWins();
       return;
     } else if (
       firstCardValue === computerCurrentKey ||
       computerCurrentKey === "12"
     ) {
-      if (!computerKeys.includes(firstCardValue)) {
-        handlePlayerWins();
-        return;
-      } else if (
-        playerKeys.includes(firstCardValue) ||
-        playerKeys.includes("12")
-      ) {
+      if (playerKeys.includes(firstCardValue) || playerKeys.includes("12")) {
         await nextPlayerRound();
         return;
-      } else {
+      } else if (
+        !playerKeys.includes(firstCardValue) &&
+        !playerKeys.includes("12")
+      ) {
         handleComputerWins();
         return;
       }
     }
   }
 
-  // Azok az esetek amikor a játékosoknál kevesebb mint 4 kártyalap van, és a computer kezd
+  // Cases where players have less than 4 cards, and the computer starts
 
-  if (computerKeys < 3 && gameField.firstChild.className === "computer-card") {
-    if (firstCardValue !== playerCurrentKey || playerCurrentKey !== "12") {
+  if (
+    computerKeys.length < 3 &&
+    gameField.firstChild.className === "computer-card"
+  ) {
+    if (firstCardValue !== playerCurrentKey && playerCurrentKey !== "12") {
       handleComputerWins();
       return;
     } else if (
@@ -672,10 +650,9 @@ async function kiertekeles() {
     }
   }
 
-  // Azok az esetek amikor a játékos kezdi a kört:
+  // The cases when the player starts the round
 
   if (gameField.firstChild.className !== "computer-card") {
-    // Első nagy feltétel
     if (
       playerCurrentKey === computerCurrentKey ||
       computerCurrentKey === "12"
@@ -701,7 +678,6 @@ async function kiertekeles() {
   }
 
   if (gameField.firstChild.className === "computer-card") {
-    // Második nagy feltétel
     if (computerCurrentKey === playerCurrentKey || playerCurrentKey === "12") {
       if (computerKeys.includes(firstCardValue)) {
         await nextComputerRound();
@@ -716,26 +692,22 @@ async function kiertekeles() {
     }
   }
 
-  await roundEvaluation(); // Következő kör kiértékelése
+  await roundEvaluation();
 }
 
 async function startGame() {
   let currentDeck = deepCopyDeck(copiedDeck);
   deck = currentDeck;
-  shuffleDeck(deck); // Pakli keverése
-  dealCardsForPlayerAndComputer(); // Lapok kiosztása. Ezen belül van meghívva a updateGameTable().
-  playerKeys = getCardKeys(playerCards).flat(); // Játékos lapjainak az értékének visszaadása
-  computerKeys = getCardKeys(computerCards).flat(); // Computer lapjainak az értékének visszaadása
+  shuffleDeck(deck);
+  dealCardsForPlayerAndComputer();
+  playerKeys = getCardKeys(playerCards).flat();
+  computerKeys = getCardKeys(computerCards).flat();
   renderDatas();
   isDisabled();
-  // Első kör levezetése
   await playerTurn();
   await computerTurn();
   await roundEvaluation();
 }
-
-// Button events
-// playerKeys tömbből kinyerni azt az értéket, amelyiket beraktuk a gameField-be.
 
 startButton.addEventListener("click", startGame);
 playerPassButton.addEventListener("click", passFunction);
