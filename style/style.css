@@ -11,8 +11,8 @@ img {
   list-style-type: none;
   display: flex;
   justify-content: space-around;
+  align-items: center;
 }
-
 .game-table {
   max-height: 100vh;
   display: flex;
@@ -22,10 +22,10 @@ img {
 
 .gamefield {
   margin: 0 auto;
-  width: 75%;
-  height: 350px;
-  /* border: 1px solid black;
-    background-color: #A0522D; */
+  width: 90%;
+  height: 300px;
+  display: flex;
+  justify-content: center;
 }
 
 .players-area {
@@ -84,16 +84,30 @@ img {
   }
 }
 
-@media only screen and (max-height: 800px) {
+@media only screen and (max-height: 817px) {
   img {
     width: 130px;
   }
 
+  .datas  {
+    flex-wrap: wrap;
+    height: 50px;
+  }
+
+  header {
+    height: 18vh;
+  }
+
   .game-table {
-    min-height: 650px;
+    height: 82vh;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    margin-bottom: 0;
+  }
+
+  .gamefield {
+    height: 230px;
+    width: 90%;
   }
 
   .players-area {
@@ -102,5 +116,13 @@ img {
     border: 1px solid black;
     background-color: #35654d;
     position: static;
+    height: 280px;
+    width: 100%;
+  }
+
+  .inside-table {
+    height: 220px;
+    margin: 0;
+    padding: 0;
   }
 }

@@ -129,12 +129,15 @@ function renderDatas() {
        <li>Number of computer scorecards: ${computerPoints}</li>
        <li>Number of computer earned cards: ${computerOwnedCards}</li>
        <li>Number of cards in deck: ${deck.length}</li>
-        <li>Value of player's cards: ${playerKeys} </li>
-  <li>Value of computer's cards: ${computerKeys} </li>
-<li>Value of the cards on the table: ${tempCardholder}</li>
-       ;`;
+       `;
   isDisabledPassBtn();
 }
+
+/*  Due to debugging and updating:
+      <li>Value of player's cards: ${playerKeys} </li>
+      <li>Value of computer's cards: ${computerKeys} </li>
+      <li>Value of the cards on the table: ${tempCardholder}</li>
+ */
 
 function toTheBaseState() {
   playerCards = [];
@@ -244,7 +247,6 @@ function playerManageCards() {
         let selectedKey = Number(selectedAlt.slice(1));
 
         if (gameField.childElementCount === 0) {
-
           gameField.appendChild(event.target);
           processPlayerCard(selectedAlt);
           resolve();
@@ -311,6 +313,16 @@ function computerManageCards() {
 
   if (
     gameField.childElementCount === 2 &&
+    gameField.lastChild.className === "computer-card"
+  ) {
+    return;
+  }
+
+  // 2024.12.15. Új feltétel
+
+  if (
+    gameField.childElementCount > 0 &&
+    gameField.firstChild.className !== "computer-card" &&
     gameField.lastChild.className === "computer-card"
   ) {
     return;
@@ -441,7 +453,7 @@ async function playerTurn() {
       await playerManageCards();
     } else {
       if (gameField.firstChild.className === "computer-card") {
-        await playerManageCards(); 
+        await playerManageCards();
         await roundEvaluation();
       } else {
         tempAnswer = "none";
@@ -493,11 +505,11 @@ async function nextComputerRound() {
 
 function endGame() {
   if (playerPoints > computerPoints) {
-    alert("Nyertél!");
+    alert("You won!");
   } else if (computerPoints > playerPoints) {
-    alert("A számítógép nyert!");
+    alert("The computer won!");
   } else {
-    alert("Döntetlen!");
+    alert("This match ended in a draw!");
   }
 }
 
@@ -627,10 +639,10 @@ async function kiertekeles() {
   // Cases where players have less than 4 cards, and the computer starts
 
   if (
-    computerKeys.length < 3 &&
+    computerKeys.length <= 3 &&
     gameField.firstChild.className === "computer-card"
   ) {
-    if (firstCardValue !== playerCurrentKey && playerCurrentKey !== "12") {
+    if (playerCurrentKey !== "12" && firstCardValue !== playerCurrentKey) {
       handleComputerWins();
       return;
     } else if (
@@ -681,7 +693,7 @@ async function kiertekeles() {
     if (computerCurrentKey === playerCurrentKey || playerCurrentKey === "12") {
       if (computerKeys.includes(firstCardValue)) {
         await nextComputerRound();
-        return roundEvaluation();
+        return;
       } else {
         handlePlayerWins();
         return;
