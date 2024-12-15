@@ -45,3 +45,39 @@ Every suit from cards has 3 icon sizes: small, medium and large.
 - IX (9)
 - VII (8)
 - VI (7)
+
+## About the game  
+
+Zsírozás is a traditional Hungarian card game where the goal is to win tricks and capture specific cards.  
+It is played with the same deck described above.  
+
+## Features  
+
+* Interactive Gameplay: Play Zsírozás with Hungarian cards.  
+* Score Tracking: Real-time updates for both players.  
+* Classic Rules: The game follows traditional Hungarian Zsírozás rules.  
+
+## How to Play  
+
+The goal of the game is to collect as many "zsír" cards (aces or tens) as possible through your tricks during the game.  
+There is no trump suit in the game, and except for the two "zsír" cards, which are worth ten points each,  
+the cards have no point values or ranks. The less-known name of the game, "Sevens," refers to the fact that in this game,  
+the otherwise worthless seven can capture any other card.  
+
+
+At the start of the game, each player is dealt four cards, and after every round, one or more new cards are dealt  
+(depending on how many cards were played during the round). Players can start the game with any card.  
+A challenged card can only be captured with a card of the same value.  
+The seven (VII) is a special card because it can be used to capture any challenged card as if it matched its value.  
+
+
+A challenged card can be captured multiple times. For example, if the starting player opens with a ten and another player captures it,  
+the starting player can continue with a new round and recapture the played cards again, possibly multiple times.  
+Ultimately, the pile goes to the player who plays the last card that matches the challenged card or a seven.  
+
+
+The player who takes the trick starts the next round.  
+
+
+The winner is the player who collects the most aces and tens during the game.  
+In a two-player game, this requires a minimum of five cards.
