@@ -252,13 +252,29 @@ function playerManageCards() {
           resolve();
         } else {
           let firstCardAlt = gameField.firstChild.alt;
+          let lastCardAlt = gameField.lastChild.alt;
           let firstCardKey = Number(firstCardAlt.slice(1));
+          let lastCardKey = Number(lastCardAlt.slice(1));
 
           if (selectedKey === firstCardKey || selectedKey === 12) {
             gameField.appendChild(event.target);
             processPlayerCard(selectedAlt);
             resolve();
           } else {
+            if (
+              (firstCardKey === lastCardKey || lastCardKey === 12) &&
+              gameField.lastChild.className === "computer-card" &&
+              gameField.firstChild.className !== "computer-card"
+            ) {
+              // Itt elsőnek ellenőrizni kell, hogy tud-e ütőlapot rakni.
+              // Csak akkor kell ezt validálni, ha a játékos rakott elsőnek, és a computer ütötte.
+              if (selectedKey !== lastCardKey || selectedKey !== 12) {
+                alert(
+                  "You can only place cards adjacent to the last card on the table."
+                );
+                return;
+              }
+            }
             if (computerCards.length < 4) {
               gameField.appendChild(event.target);
               processPlayerCard(selectedAlt);
@@ -291,11 +307,18 @@ function playerManageCards() {
     playerGameTable.addEventListener("click", handleClick);
     setTimeout(() => {
       playerGameTable.classList.add("sign");
-    }, 1000);
+    }, 250);
   });
 }
 
 function computerManageCards() {
+  if (
+    gameField.childElementCount > 0 &&
+    gameField.firstChild.className === "computer-card" &&
+    gameField.lastChild.className === "computer-card"
+  ) {
+    return;
+  }
   if (
     gameField.childElementCount !== 0 &&
     gameField.firstChild.className === "computer-card" &&
@@ -535,8 +558,8 @@ async function handlePlayerWins() {
     setTimeout(() => {
       endGame();
     }, 2000);
+    playerGameTable.classList.remove("sign");
     setTimeout(() => {
-      playerGameTable.classList.remove("sign");
       startButton.style.visibility = "visible";
       location.reload();
     }, 2500);
@@ -564,8 +587,8 @@ async function handleComputerWins() {
     setTimeout(() => {
       endGame();
     }, 2000);
+    playerGameTable.classList.remove("sign");
     setTimeout(() => {
-      playerGameTable.classList.remove("sign");
       startButton.style.visibility = "visible";
       location.reload();
     }, 2500);
