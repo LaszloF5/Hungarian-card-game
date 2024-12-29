@@ -203,8 +203,7 @@ function dealCard(deck) {
 function updateGameTable(cards, gameTable) {
   gameTable.innerHTML = "";
   cards.forEach((card) => {
-    //TODO: Átírni for ciklusra.
-    const cardHtml = Object.values(card); //imgs // A playerCards egy szájbak*rt tömb!
+    const cardHtml = Object.values(card);
     gameTable.innerHTML += cardHtml;
   });
 }
@@ -240,6 +239,15 @@ function getCardKeys(cards) {
 // Player chooses a card and places it on the table
 
 function playerManageCards() {
+  if (
+    gameField.childElementCount > 0 &&
+    gameField.lastChild.className !== "computer-card"
+  ) {
+    if (computerCards.length !== playerCards.length) {
+      computerManageCards();
+      return;
+    }
+  }
   return new Promise((resolve) => {
     function handleClick(event) {
       if (event.target.tagName === "IMG") {
@@ -266,12 +274,8 @@ function playerManageCards() {
               gameField.lastChild.className === "computer-card" &&
               gameField.firstChild.className !== "computer-card"
             ) {
-              // Itt elsőnek ellenőrizni kell, hogy tud-e ütőlapot rakni.
-              // Csak akkor kell ezt validálni, ha a játékos rakott elsőnek, és a computer ütötte.
               if (selectedKey !== lastCardKey || selectedKey !== 12) {
-                alert(
-                  "You can only place cards adjacent to the last card on the table."
-                );
+                alert("You can only lay down cards of the same value or 7.");
                 return;
               }
             }
@@ -307,11 +311,20 @@ function playerManageCards() {
     playerGameTable.addEventListener("click", handleClick);
     setTimeout(() => {
       playerGameTable.classList.add("sign");
-    }, 250);
+    }, 500);
   });
 }
 
-function computerManageCards() {
+async function computerManageCards() {
+  if (
+    gameField.childElementCount > 0 &&
+    gameField.lastChild.className === "computer-card"
+  ) {
+    if (computerCards.length !== playerCards.length) {
+      await playerManageCards();
+      return;
+    }
+  }
   if (
     gameField.childElementCount > 0 &&
     gameField.firstChild.className === "computer-card" &&
@@ -340,8 +353,6 @@ function computerManageCards() {
   ) {
     return;
   }
-
-  // 2024.12.15. Új feltétel
 
   if (
     gameField.childElementCount > 0 &&
@@ -565,6 +576,7 @@ async function handlePlayerWins() {
     }, 2500);
   } else {
     await playerTurn();
+    playerGameTable.classList.remove("sign");
     await computerTurn();
     await roundEvaluation();
     return;
